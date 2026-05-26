@@ -2076,6 +2076,27 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
     aspect-ratio: 4 / 5;
     min-height: 360px;
   }
+
+  /* Hotspot arrows: smaller surface, label above (avoid overlap with bottom artifact rail) */
+  .hotspot-surface {
+    width: 44px;
+    height: 44px;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .hotspot-icon svg { width: 22px; height: 22px; }
+  .hotspot-label {
+    top: auto;
+    bottom: calc(100% + 6px);
+    font-size: .65rem;
+    padding: .2rem .5rem;
+    max-width: 180px;
+    box-shadow: 1.5px 1.5px 0 var(--ink);
+  }
+  .tour-hotspot:hover .hotspot-surface,
+  .tour-hotspot:focus-visible .hotspot-surface {
+    box-shadow: 1px 1px 0 var(--ink);
+  }
   .viewer-toolbar {
     border-radius: 0 !important;
     padding: .55rem .9rem;
