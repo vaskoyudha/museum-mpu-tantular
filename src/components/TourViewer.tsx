@@ -127,7 +127,7 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
         minFov: 35,
         maxFov: 95,
         mousewheelCtrlKey: true,
-        touchmoveTwoFingers: true,
+        touchmoveTwoFingers: false,
         navbar: ['zoom', 'move', 'caption', 'fullscreen'],
         loadingTxt: `Memuat ${initial.name}`,
       });
