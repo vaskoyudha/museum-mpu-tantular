@@ -1886,3 +1886,342 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
   .glass-nav { top: .8rem; min-height: 56px; }
   .nav-links { display: none; }
 }
+
+/* ============================================================
+   Mobile-app skin — bottom tab bar, edge-to-edge tour,
+   bottom-sheet modal, compact header. Desktop untouched.
+   ============================================================ */
+
+.mobile-tabbar { display: none; }
+.artifact-sheet-handle { display: none; }
+
+@media (max-width: 768px) {
+  :root {
+    --shadow-thick: 3px 3px 0 var(--ink);
+    --shadow-mid: 2px 2px 0 var(--ink);
+    --shadow-thin: 1.5px 1.5px 0 var(--ink);
+  }
+
+  body {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+  .site-shell {
+    background-size: 14px 14px, auto, auto;
+  }
+  .section-pad {
+    padding: 3.25rem 1.5rem;
+  }
+  h1 { font-size: clamp(2.1rem, 9.5vw, 2.8rem); line-height: 1; }
+  h2 { font-size: clamp(1.7rem, 7vw, 2.2rem); line-height: 1.05; }
+  h3 { font-size: 1.05rem; }
+  p  { font-size: .94rem; line-height: 1.55; }
+
+  .glass-nav {
+    top: max(.5rem, env(safe-area-inset-top));
+    left: .6rem;
+    right: .6rem;
+    min-height: 52px;
+    padding: .35rem .55rem .35rem .85rem;
+    box-shadow: var(--shadow-mid);
+  }
+  .glass-nav .icon-button { display: none; }
+  .brand-mark { font-size: 1rem; gap: .5rem; }
+  .brand-symbol { width: 32px; height: 32px; font-size: 1rem; }
+  .brand-mark span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60vw;
+  }
+
+  .hero-section {
+    padding-top: 5.5rem;
+    padding-bottom: 2.5rem;
+    overflow-x: clip;
+  }
+  .hero-grid { min-width: 0; }
+  .hero-card {
+    padding: 0;
+    min-width: 0;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .hero-card .eyebrow {
+    font-size: .64rem;
+    letter-spacing: .08em;
+    padding: .3rem .65rem;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.25;
+  }
+  .hero-card h1 {
+    max-width: none;
+    margin-bottom: .85rem;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .hero-card h1 .brush { display: inline; padding: 0 .08em; }
+  .hero-copy {
+    font-size: .98rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  .hero-actions {
+    gap: .6rem;
+    min-width: 0;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .hero-actions .button {
+    flex: 1 1 100%;
+    justify-content: center;
+    min-height: 48px;
+    padding: .85rem 1.1rem;
+    font-size: .92rem;
+  }
+  .hero-proof {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .55rem;
+    width: 100%;
+    margin: 1.1rem 0 0 0;
+  }
+  .hero-proof span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .2rem;
+    font-size: .72rem;
+    padding: .7rem .65rem;
+    line-height: 1.15;
+    border-radius: 14px;
+    aspect-ratio: 1 / 0.95;
+    justify-content: center;
+  }
+  .hero-proof span small { font-size: .58rem; letter-spacing: .03em; }
+  .hero-visual {
+    aspect-ratio: 1 / 1.05;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .hero-stamp { display: none; }
+  .polaroid-back {
+    width: 50%;
+    top: 2%;
+    left: 0;
+    transform: rotate(-8deg);
+  }
+  .polaroid-mid {
+    width: 48%;
+    bottom: 4%;
+    left: 12%;
+    transform: rotate(5deg);
+  }
+  .polaroid-front {
+    width: 60%;
+    top: 16%;
+    right: 0;
+    transform: rotate(-2deg);
+  }
+
+  .museum-section { padding-top: 2.5rem; }
+  .museum-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: .9rem;
+  }
+  .museum-card {
+    padding: .55rem .55rem .85rem;
+    box-shadow: var(--shadow-mid);
+  }
+  .museum-thumb { height: 120px; }
+  .museum-card h3 { font-size: 1rem; }
+
+  .tour-section { gap: 1.4rem; }
+  .tour-copy { padding: 0; }
+  .tour-headline { font-size: 1.7rem; }
+  .scene-groups { gap: .85rem; }
+  .scene-pills {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: .5rem;
+    padding: .25rem .15rem .5rem;
+    margin: 0 -.25rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scene-pills::-webkit-scrollbar { display: none; }
+  .scene-pills > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-height: 44px;
+  }
+
+  .tour-section > .viewer-frame,
+  .viewer-frame {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+  .viewer-frame::before { display: none; }
+  .viewer-frame > .panorama-stage {
+    border-radius: 0;
+    aspect-ratio: 4 / 5;
+    min-height: 360px;
+  }
+  .viewer-toolbar {
+    border-radius: 0 !important;
+    padding: .55rem .9rem;
+    font-size: .72rem;
+    gap: .5rem;
+  }
+  .viewer-toolbar span { font-size: .7rem; }
+  .viewer-controls {
+    padding: .6rem .9rem;
+    gap: .65rem;
+    font-size: .72rem;
+  }
+
+  .current-scene {
+    padding: 1rem;
+    gap: .85rem;
+    box-shadow: var(--shadow-mid);
+  }
+  .scene-header { padding-bottom: .85rem; }
+  .scene-header h3 { font-size: 1.05rem; }
+
+  .scene-nav { gap: .5rem; }
+  .nav-step {
+    padding: .65rem .8rem;
+    min-height: 56px;
+    font-size: .82rem;
+  }
+  .nav-step span small { font-size: .6rem; }
+
+  .audience-section { padding-top: 3rem; }
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .gallery-card {
+    height: 200px;
+    border-width: 8px;
+    box-shadow: var(--shadow-mid);
+  }
+
+  .visit-card { padding: 1.1rem; box-shadow: var(--shadow-mid); }
+  .info-tile { padding: .85rem; }
+  .final-cta { padding: 1rem; box-shadow: var(--shadow-mid); }
+  .final-cta .button { min-height: 48px; justify-content: center; }
+
+  .button {
+    min-height: 44px;
+  }
+
+  /* ----- Bottom tab bar (Beranda / Museum / Tur / Kunjungi) ----- */
+  .mobile-tabbar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .25rem;
+    position: fixed;
+    z-index: 90;
+    left: .6rem;
+    right: .6rem;
+    bottom: max(.5rem, env(safe-area-inset-bottom));
+    padding: .35rem .35rem;
+    background: var(--paper);
+    border: var(--border-ink);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-mid);
+  }
+  .mobile-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .15rem;
+    padding: .45rem .25rem .35rem;
+    border-radius: var(--radius-pill);
+    color: var(--ink-soft);
+    font-weight: 700;
+    transition: background .18s ease, color .18s ease, transform .18s ease;
+    min-height: 52px;
+  }
+  .mobile-tab:active { transform: translateY(1px); }
+  .mobile-tab-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+  }
+  .mobile-tab-label {
+    font-size: .62rem;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .mobile-tab.is-active {
+    color: var(--ink);
+    background: var(--paper-2);
+  }
+  .mobile-tab.is-active .mobile-tab-icon {
+    background: var(--terracotta);
+    color: var(--cream);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-thin);
+  }
+
+  /* ----- Artifact bottom sheet ----- */
+  .artifact-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+    background: rgba(20, 18, 14, .55);
+  }
+  .artifact-modal {
+    width: 100%;
+    max-width: none;
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+    border-bottom: 0;
+    box-shadow: 0 -6px 0 var(--ink);
+    padding-bottom: env(safe-area-inset-bottom);
+    animation: artifact-sheet-up .28s cubic-bezier(.34, 1.2, .64, 1);
+  }
+  .artifact-sheet-handle {
+    display: block;
+    width: 44px;
+    height: 5px;
+    margin: .55rem auto .25rem;
+    background: var(--ink-soft);
+    border-radius: 999px;
+    opacity: .35;
+  }
+  .artifact-modal-head { padding: .65rem 1rem .8rem; }
+  .artifact-modal-head h3 { font-size: 1.2rem; }
+  .artifact-modal-body { padding: .9rem 1rem 1.25rem; }
+  .artifact-photo-grid { grid-template-columns: 1fr; gap: .75rem; }
+  .artifact-close {
+    width: 40px; height: 40px;
+    min-width: 40px;
+  }
+
+  @keyframes artifact-sheet-up {
+    from { transform: translateY(100%); opacity: .4; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* Larger phones / small tablets — keep tab bar but a bit roomier */
+@media (max-width: 768px) and (min-width: 480px) {
+  .mobile-tab-label { font-size: .68rem; }
+  .museum-thumb { height: 140px; }
+  .viewer-frame > .panorama-stage { aspect-ratio: 1 / 1; }
+}

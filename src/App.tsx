@@ -7,6 +7,7 @@ import {
   Clock3,
   Compass,
   GraduationCap,
+  Home,
   Landmark,
   MapPin,
   Menu,
@@ -28,6 +29,13 @@ const navItems = [
   { label: 'Cerita', href: '#stories' },
   { label: 'Kunjungi', href: '#visit' },
 ];
+
+const mobileTabs = [
+  { id: 'top', label: 'Beranda', icon: Home },
+  { id: 'museums', label: 'Museum', icon: Landmark },
+  { id: 'tour-tour', label: 'Tur 360', icon: Compass },
+  { id: 'visit', label: 'Kunjungi', icon: MapPin },
+] as const;
 
 const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
 
@@ -84,6 +92,7 @@ function App() {
       />
       <AudienceSection />
       <GalleryKunjungiSection />
+      <MobileTabBar />
       {activeArtifact ? (
         <ArtifactModal
           artifact={activeArtifact}
@@ -92,6 +101,54 @@ function App() {
         />
       ) : null}
     </main>
+  );
+}
+
+function MobileTabBar() {
+  const [activeId, setActiveId] = useState<string>('top');
+
+  useEffect(() => {
+    const ids = mobileTabs.map((t) => t.id);
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target.id) setActiveId(visible.target.id);
+      },
+      { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+    sections.forEach((s) => {
+      observer.observe(s);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <nav className="mobile-tabbar" aria-label="Navigasi seluler">
+      {mobileTabs.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = tab.id === activeId;
+        return (
+          <a
+            key={tab.id}
+            href={`#${tab.id}`}
+            className={`mobile-tab ${isActive ? 'is-active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            <span className="mobile-tab-icon" aria-hidden="true">
+              <Icon size={22} strokeWidth={2.2} />
+            </span>
+            <span className="mobile-tab-label">{tab.label}</span>
+          </a>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -527,6 +584,7 @@ function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; vis
   return createPortal(
     <div className="artifact-modal-backdrop" onClick={onClose} role="presentation">
       <div className="artifact-modal" role="dialog" aria-modal="true" aria-labelledby="artifact-modal-title" onClick={(e) => e.stopPropagation()}>
+        <span className="artifact-sheet-handle" aria-hidden="true" />
         <header className="artifact-modal-head">
           <div>
             <p className="eyebrow small"><Sparkles size={12} /> Artefak Museum Mpu Tantular</p>
