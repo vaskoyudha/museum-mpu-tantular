@@ -6,6 +6,7 @@ dist/
 .omx/logs/
 .omx/state/
 .omx/metrics.json
+.sisyphus/
 
 .playwright-mcp/
 *.png

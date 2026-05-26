@@ -3,6 +3,7 @@ import {
   BookOpen,
   Building2,
   CalendarDays,
+  Check,
   Clock3,
   Compass,
   GraduationCap,
@@ -13,9 +14,12 @@ import {
   Sparkles,
   Ticket,
   UsersRound,
+  X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { audienceBenefits, galleryItems, museumProfile, museums, type Museum } from './data/museums';
+import { artifactsByScene, totalArtifacts, type Artifact } from './data/artifacts';
 import { TourViewer } from './components/TourViewer';
 
 const navItems = [
@@ -25,18 +29,68 @@ const navItems = [
   { label: 'Kunjungi', href: '#visit' },
 ];
 
+const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
+
 function App() {
   const [activeMuseum, setActiveMuseum] = useState<Museum>(museums[0]);
+  const [activeArtifact, setActiveArtifact] = useState<Artifact | null>(null);
+  const [visitedArtifacts, setVisitedArtifacts] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const raw = window.localStorage.getItem(VISITED_STORAGE_KEY);
+      if (!raw) return new Set();
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed)) return new Set(parsed.filter((v): v is string => typeof v === 'string'));
+      return new Set();
+    } catch {
+      return new Set();
+    }
+  });
   const primaryMuseum = useMemo(() => museums.slice(0, 4), []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(VISITED_STORAGE_KEY, JSON.stringify([...visitedArtifacts]));
+    } catch {
+      // ignore storage failures (private mode, quota)
+    }
+  }, [visitedArtifacts]);
+
+  const markVisited = useCallback((id: string) => {
+    setVisitedArtifacts((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
+
+  const handleArtifactSelect = useCallback((artifact: Artifact) => {
+    setActiveArtifact(artifact);
+    markVisited(artifact.id);
+  }, [markVisited]);
 
   return (
     <main className="site-shell">
       <Header />
       <Hero />
       <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={setActiveMuseum} />
-      <TourSection activeMuseum={activeMuseum} museums={museums} onSelect={setActiveMuseum} />
+      <TourSection
+        activeMuseum={activeMuseum}
+        museums={museums}
+        onSelect={setActiveMuseum}
+        visitedArtifacts={visitedArtifacts}
+        onArtifactSelect={handleArtifactSelect}
+      />
       <AudienceSection />
       <GalleryKunjungiSection />
+      {activeArtifact ? (
+        <ArtifactModal
+          artifact={activeArtifact}
+          visited={visitedArtifacts.has(activeArtifact.id)}
+          onClose={() => setActiveArtifact(null)}
+        />
+      ) : null}
     </main>
   );
 }
@@ -61,22 +115,72 @@ function Header() {
 }
 
 function Hero() {
+  const heroFront = museums[6];
+  const heroMid = museums[15];
+  const heroBack = museums[0];
+
   return (
     <section id="top" className="hero-section section-pad">
       <div className="hero-atmosphere" aria-hidden="true" />
-      <div className="hero-card glass-panel reveal-card">
-        <p className="eyebrow"><span /> Pengalaman Museum 360°</p>
-        <h1>Jelajahi Museum Mpu Tantular dalam 360°</h1>
-        <p className="hero-copy">Susuri 23 titik panorama asli Museum Mpu Tantular di Sidoarjo — mulai dari gerbang masuk, percabangan rute, ruang pamer, hingga area tangga.</p>
-        <div className="hero-actions">
-          <a className="button button-primary" href="#tour-tour"><Compass size={20} /> Mulai Tur 360</a>
-          <a className="button button-ghost" href="#museums"><Landmark size={20} /> Jelajahi Museum</a>
+      <span className="hero-sticker s-asterisk" aria-hidden="true">✺</span>
+      <div className="hero-grid">
+        <div className="hero-card reveal-card">
+          <p className="eyebrow"><span /> Pameran Bermain · Tur 360°</p>
+          <h1>
+            Jelajahi Museum <span className="brush">Mpu Tantular</span> dalam 360°
+          </h1>
+          <p className="hero-copy">Susuri 23 titik panorama asli Museum Mpu Tantular di Sidoarjo — mulai dari gerbang masuk, percabangan rute, ruang pamer, hingga area tangga.</p>
+          <div className="hero-actions">
+            <a className="button button-primary" href="#tour-tour"><Compass size={20} /> Mulai Tur 360</a>
+            <a className="button button-ghost" href="#museums"><Landmark size={20} /> Jelajahi Museum</a>
+          </div>
+          <div className="hero-proof" aria-label="Sorotan Museum360">
+            <span><Compass size={22} /> 23 titik<br /><small>Rute Mpu Tantular</small></span>
+            <span><Sparkles size={22} /> Panorama asli<br /><small>8000×4000 px</small></span>
+            <span><MapPin size={22} /> Sidoarjo<br /><small>Jawa Timur</small></span>
+          </div>
         </div>
-      </div>
-      <div className="hero-proof glass-strip" aria-label="Sorotan Museum360">
-        <span><Compass size={22} /> 23 titik<br /><small>Rute Mpu Tantular</small></span>
-        <span><Sparkles size={22} /> Panorama asli<br /><small>Dari folder asetmu</small></span>
-        <span><MapPin size={22} /> Sidoarjo, Jawa Timur<br /><small>Museum Mpu Tantular</small></span>
+
+        <aside className="hero-visual" aria-label="Cuplikan panorama">
+          <span className="hero-stamp" aria-hidden="true">
+            <span>Pameran</span>
+            <strong>Mpu Tantular</strong>
+            <span>Est. 1974</span>
+          </span>
+          <span className="hero-live-badge" aria-hidden="true">
+            <span className="live-dot" /> Live 360°
+          </span>
+
+          <figure className="polaroid polaroid-back" aria-hidden="true">
+            <span className="polaroid-photo" style={{ backgroundImage: `url(${heroBack.image})` }} />
+            <figcaption>Gerbang Masuk</figcaption>
+          </figure>
+
+          <figure className="polaroid polaroid-mid" aria-hidden="true">
+            <span className="polaroid-photo" style={{ backgroundImage: `url(${heroMid.image})` }} />
+            <figcaption>Tangga Lantai 2</figcaption>
+          </figure>
+
+          <figure className="polaroid polaroid-front">
+            <span className="polaroid-tape" aria-hidden="true" />
+            <span className="polaroid-photo" style={{ backgroundImage: `url(${heroFront.image})` }}>
+              <span className="polaroid-corner" aria-hidden="true">
+                <Compass size={14} strokeWidth={2.6} />
+              </span>
+            </span>
+            <figcaption>
+              <strong>Ruang Pamer Utama</strong>
+              <small>Titik 5 dari 23</small>
+            </figcaption>
+          </figure>
+
+          <span className="hero-arrow" aria-hidden="true">
+            <svg viewBox="0 0 80 80" width="64" height="64" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+              <path d="M8 60 C 24 30, 50 18, 70 22" />
+              <path d="M62 14 L 70 22 L 62 30" />
+            </svg>
+          </span>
+        </aside>
       </div>
     </section>
   );
@@ -87,7 +191,7 @@ function FeaturedMuseum({ museums: featured, activeId, onSelect }: { museums: Mu
     <section id="museums" className="museum-section section-pad">
       <div className="section-heading editorial-heading">
         <p className="eyebrow"><span /> Rute 360 Museum Mpu Tantular</p>
-        <h2>Jelajahi Seluruh Rute Museum</h2>
+        <h2>Jelajahi <span className="brush">Seluruh Rute</span> Museum</h2>
         <p>Setiap kartu menggunakan gambar panorama asli 8000×4000 yang kamu sediakan untuk Museum Mpu Tantular.</p>
         <a className="text-link" href="#tour-tour">Buka titik rute <ArrowRight size={18} /></a>
       </div>
@@ -95,24 +199,22 @@ function FeaturedMuseum({ museums: featured, activeId, onSelect }: { museums: Mu
         {featured.map((museum, index) => (
           <button
             type="button"
-            className={`museum-card glass-panel ${museum.id === activeId ? 'active' : ''}`}
+            className={`museum-card ${museum.id === activeId ? 'active' : ''}`}
             key={museum.id}
             onClick={() => onSelect(museum)}
           >
-            <span className="card-index">{String(index + 1).padStart(2, '0')}</span>
-            <div>
-              <h3>{museum.name}</h3>
-              <p className="location"><MapPin size={17} /> {museum.city}</p>
-              <p>{museum.description}</p>
-              <span className="tag-pill"><Landmark size={15} /> {museum.category}</span>
-            </div>
             <span
               className={`museum-thumb ${museum.accent}`}
               aria-hidden="true"
-              style={{ backgroundImage: `linear-gradient(180deg, rgba(36, 29, 23, 0.05), rgba(36, 29, 23, 0.42)), url(${museum.image})` }}
+              style={{ backgroundImage: `linear-gradient(180deg, rgba(42, 27, 18, 0.05), rgba(42, 27, 18, 0.55)), url(${museum.image})` }}
             >
-              <span />
+              <span className="card-index">{String(index + 1).padStart(2, '0')}</span>
+              <span className="tag-pill"><Landmark size={14} /> {museum.category}</span>
             </span>
+            <div className="museum-card-body">
+              <h3>{museum.highlight}</h3>
+              <p className="location"><MapPin size={15} /> {museum.city}</p>
+            </div>
           </button>
         ))}
       </div>
@@ -120,29 +222,172 @@ function FeaturedMuseum({ museums: featured, activeId, onSelect }: { museums: Mu
   );
 }
 
-function TourSection({ activeMuseum, museums: scenes, onSelect }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void }) {
+function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts, onArtifactSelect }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void; visitedArtifacts: Set<string>; onArtifactSelect: (artifact: Artifact) => void }) {
+  const activeIndex = scenes.findIndex((s) => s.id === activeMuseum.id);
+  const total = scenes.length;
+  const prevScene = activeIndex > 0 ? scenes[activeIndex - 1] : null;
+  const nextScene = activeIndex < total - 1 ? scenes[activeIndex + 1] : null;
+  const sceneById = useMemo(() => new Map(scenes.map((s) => [s.id, s])), [scenes]);
+  const forwardHotspots = activeMuseum.hotspots.filter((h) => h.label !== 'Kembali');
+  const sceneArtifacts = artifactsByScene[activeMuseum.id] ?? [];
+  const sceneVisitedCount = sceneArtifacts.filter((a) => visitedArtifacts.has(a.id)).length;
+  const visitedCount = visitedArtifacts.size;
+  const categoryOrder = ['Gerbang Masuk', 'Orientasi Rute', 'Jalur Galeri', 'Galeri Atas'] as const;
+  const categorySlug: Record<string, string> = {
+    'Gerbang Masuk': 'cat-gerbang',
+    'Orientasi Rute': 'cat-orientasi',
+    'Jalur Galeri': 'cat-galeri',
+    'Galeri Atas': 'cat-galeri-atas',
+  };
+  const grouped = scenes.reduce<Record<string, Museum[]>>((acc, scene) => {
+    const list = acc[scene.category] ?? [];
+    list.push(scene);
+    acc[scene.category] = list;
+    return acc;
+  }, {});
+  const stripPrefix = (label: string) => label.replace(/^Area\s+\d+(?:[a-z-]*)?\s*·\s*/i, '');
+
   return (
     <section id="tour-tour" className="tour-section section-pad">
       <div className="tour-copy">
         <p className="eyebrow"><span /> Museum Mpu Tantular Tur 360</p>
-        <h2>Masuk ke Museum Mpu Tantular</h2>
-        <p>Pilih salah satu titik rute, lalu geser viewer 360° untuk melihat panorama museum yang sebenarnya.</p>
-        <div className="scene-list" aria-label="Pilih titik museum">
-          {scenes.map((scene) => (
-            <button className={scene.id === activeMuseum.id ? 'active' : ''} type="button" key={scene.id} onClick={() => onSelect(scene)}>
-              <Landmark size={18} /> {scene.highlight}
-            </button>
-          ))}
+        <h2 className="tour-headline">Masuk ke <span className="brush">Pameran</span></h2>
+        <p className="tour-copy-text">Pilih titik rute, lalu geser viewer 360° untuk melihat panorama museum yang sebenarnya.</p>
+        <div className="scene-groups">
+          {categoryOrder.map((cat) => {
+            const list = grouped[cat] ?? [];
+            if (list.length === 0) return null;
+            return (
+              <div className="scene-group" key={cat}>
+                <p className={`scene-group-title ${categorySlug[cat]}`}>
+                  <span className="cat-dot" aria-hidden="true" />
+                  <span>{cat}</span>
+                  <span className="cat-count">{list.length}</span>
+                </p>
+                <div className="scene-pills">
+                  {list.map((scene) => {
+                    const idx = scenes.findIndex((s) => s.id === scene.id);
+                    const isActive = scene.id === activeMuseum.id;
+                    const sceneArtifactCount = artifactsByScene[scene.id]?.length ?? 0;
+                    return (
+                      <button
+                        type="button"
+                        key={scene.id}
+                        className={`scene-pill ${categorySlug[cat]} ${isActive ? 'active' : ''}`}
+                        onClick={() => onSelect(scene)}
+                      >
+                        <span className="pill-num">{String(idx + 1).padStart(2, '0')}</span>
+                        <span className="pill-label">{stripPrefix(scene.highlight)}</span>
+                        {sceneArtifactCount > 0 ? (
+                          <span className="pill-artifact-badge" aria-label={`${sceneArtifactCount} artefak di scene ini`}>
+                            <Sparkles size={10} strokeWidth={2.6} />
+                            {sceneArtifactCount}
+                          </span>
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <TourViewer museum={activeMuseum} />
-      <aside className="current-scene glass-panel">
-        <span className="round-icon"><Landmark size={22} /></span>
-        <p className="eyebrow small">Titik Saat Ini</p>
-        <h3>{activeMuseum.highlight}</h3>
-        <p><MapPin size={17} /> {activeMuseum.name} · {activeMuseum.city}, {activeMuseum.province}</p>
-        <hr />
-        <p className="scene-note">Dimuat dari folder panorama Museum Mpu Tantular yang kamu berikan.</p>
+
+      <TourViewer
+        museum={activeMuseum}
+        museums={scenes}
+        onSelect={onSelect}
+        artifacts={sceneArtifacts}
+        visitedArtifacts={visitedArtifacts}
+        onArtifactSelect={onArtifactSelect}
+      />
+
+      <aside className="current-scene">
+        <div className="scene-progress">
+          <p className="eyebrow small">Progres Tur</p>
+          <p className="progress-text">
+            <strong>Titik {activeIndex + 1}</strong> <span>dari {total}</span>
+          </p>
+          <div className="progress-track" aria-hidden="true">
+            <div className="progress-fill" style={{ width: `${((activeIndex + 1) / total) * 100}%` }} />
+          </div>
+        </div>
+
+        <div className="artifact-progress">
+          <span className="round-icon artifact-round"><Sparkles size={16} /></span>
+          <div className="artifact-progress-text">
+            <p className="micro-label">Artefak Ditemukan</p>
+            <p className="artifact-count">
+              <strong>{visitedCount}</strong> <span>/ {totalArtifacts} total</span>
+            </p>
+            {sceneArtifacts.length > 0 ? (
+              <p className="artifact-room">Di ruangan ini: <strong>{sceneVisitedCount}/{sceneArtifacts.length}</strong></p>
+            ) : (
+              <p className="artifact-room muted">Tidak ada artefak di ruangan ini</p>
+            )}
+          </div>
+        </div>
+
+        <div className="scene-header">
+          <span className="round-icon"><Landmark size={20} /></span>
+          <div>
+            <p className="eyebrow small">Titik Saat Ini</p>
+            <h3>{activeMuseum.highlight}</h3>
+            <p className="scene-meta"><MapPin size={14} /> {activeMuseum.city}, {activeMuseum.province}</p>
+          </div>
+        </div>
+
+        {forwardHotspots.length > 0 && (
+          <div className="scene-routes">
+            <p className="micro-label">Jalan ke</p>
+            <ul>
+              {forwardHotspots.map((h) => {
+                const target = sceneById.get(h.targetId);
+                if (!target) return null;
+                return (
+                  <li key={`${h.targetId}-${h.label}`}>
+                    <button type="button" className="route-link" onClick={() => onSelect(target)}>
+                      <span className="route-thumb" style={{ backgroundImage: `url(${target.image})` }} aria-hidden="true" />
+                      <span className="route-text">
+                        <span className="route-label">{h.label}</span>
+                        <span className="route-target">{stripPrefix(target.highlight)}</span>
+                      </span>
+                      <ArrowRight size={16} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        <div className="scene-nav">
+          <button
+            type="button"
+            className="nav-step"
+            disabled={!prevScene}
+            onClick={() => prevScene && onSelect(prevScene)}
+          >
+            <ArrowRight size={16} className="flip" />
+            <span>
+              <small>Sebelumnya</small>
+              {prevScene ? stripPrefix(prevScene.highlight) : 'Awal rute'}
+            </span>
+          </button>
+          <button
+            type="button"
+            className="nav-step nav-next"
+            disabled={!nextScene}
+            onClick={() => nextScene && onSelect(nextScene)}
+          >
+            <span>
+              <small>Berikutnya</small>
+              {nextScene ? stripPrefix(nextScene.highlight) : 'Akhir rute'}
+            </span>
+            <ArrowRight size={16} />
+          </button>
+        </div>
       </aside>
     </section>
   );
@@ -156,15 +401,15 @@ function AudienceSection() {
       <div className="rhythm-line" aria-hidden="true"><span>Jelajahi</span><span>Temukan</span><span>Terhubung</span></div>
       <div className="section-heading audience-heading">
         <p className="eyebrow"><span /> Museum Mpu Tantular | Kunjungan Digital</p>
-        <h2>Dibangun dari Foto Museum yang Kamu Berikan</h2>
-        <p>Website ini sekarang menjadikan scene 360 asli Mpu Tantular sebagai pusat pengalaman, dibungkus dengan antarmuka kaca yang modern.</p>
+        <h2>Dibangun dari <span className="brush">Foto Asli</span> Museum</h2>
+        <p>Website ini sekarang menjadikan scene 360 asli Mpu Tantular sebagai pusat pengalaman, dibungkus dalam pameran bermain yang ramah dijelajah.</p>
       </div>
       <div className="benefit-grid">
         {audienceBenefits.map((benefit, index) => {
           const Icon = icons[index];
           return (
-            <article className="benefit-card glass-panel" key={benefit.title}>
-              <span className="round-icon"><Icon size={32} /></span>
+            <article className="benefit-card" key={benefit.title}>
+              <span className="round-icon"><Icon size={28} /></span>
               <div>
                 <h3>{benefit.title}</h3>
                 <p>{benefit.copy}</p>
@@ -173,10 +418,10 @@ function AudienceSection() {
           );
         })}
       </div>
-      <div className="metrics-strip glass-panel">
-        <strong>{museumProfile.sceneCount}<span>Titik</span></strong>
-        <strong>360°<span>Panorama</span></strong>
-        <strong><MonitorSmartphone size={54} /><span>Semua Perangkat</span></strong>
+      <div className="metrics-strip">
+        <strong>{museumProfile.sceneCount}<span>Titik Panorama</span></strong>
+        <strong>360°<span>Sudut Pandang</span></strong>
+        <strong><MonitorSmartphone size={48} /><span>Semua Perangkat</span></strong>
       </div>
     </section>
   );
@@ -190,7 +435,7 @@ function GalleryKunjungiSection() {
       <div className="gallery-panel">
         <div className="section-heading compact">
           <p className="eyebrow"><span /> Galeri Warisan</p>
-          <h2>Jelajahi Rute Museum Mpu Tantular</h2>
+          <h2>Polaroid <span className="brush">Rute Museum</span></h2>
           <p>Ringkasan visual berbasis galeri dari frame pilihan dalam kumpulan panorama Museum Mpu Tantular.</p>
         </div>
         <div className="gallery-grid">
@@ -200,24 +445,24 @@ function GalleryKunjungiSection() {
               <article
                 className={`gallery-card gallery-${index + 1}`}
                 key={item.title}
-                style={{ backgroundImage: `linear-gradient(180deg, rgba(36, 29, 23, 0.04), rgba(36, 29, 23, 0.48)), url(${item.image})` }}
+                style={{ backgroundImage: `linear-gradient(180deg, rgba(42, 27, 18, 0.04), rgba(42, 27, 18, 0.32)), url(${item.image})` }}
               >
-                <div className="gallery-overlay glass-panel">
-                  <Icon size={25} />
+                <div className="gallery-overlay">
+                  <Icon size={22} />
                   <div>
                     <h3>{item.title}</h3>
                     <p>{item.copy}</p>
                   </div>
-                  <ArrowRight size={22} />
+                  <ArrowRight size={20} />
                 </div>
               </article>
             );
           })}
         </div>
       </div>
-      <aside className="visit-card glass-panel">
+      <aside className="visit-card">
         <span className="round-icon"><CalendarDays size={24} /></span>
-        <h2>Rencanakan Kunjungan Setelah Tur Mpu Tantular</h2>
+        <h2>Rencanakan <span className="brush">Kunjungan</span></h2>
         <p>Pratinjau rute dibuat dari foto yang kamu berikan; pastikan jam buka dan tiket melalui sumber resmi museum sebelum produksi.</p>
         <div className="visit-grid">
           <InfoTile icon={Clock3} title="Jam Buka" text="Cek jam operasional terbaru melalui kanal resmi Museum Mpu Tantular." />
@@ -226,8 +471,8 @@ function GalleryKunjungiSection() {
           <InfoTile icon={BookOpen} title="Fokus Koleksi" text="Scene rute, ruang pamer, akses, dan transisi tangga." />
         </div>
       </aside>
-      <div className="final-cta glass-panel">
-        <p>Mulai dari rute 360°, lalu lanjutkan dengan kunjungan langsung ke Museum Mpu Tantular.</p>
+      <div className="final-cta">
+        <p>Mulai dari rute 360°, lalu lanjutkan kunjungan langsung ke Museum Mpu Tantular.</p>
         <a className="button button-primary" href="#tour-tour"><Compass size={19} /> Mulai Tur</a>
         <a className="button button-ghost" href="#museums"><BookOpen size={19} /> Lihat Panduan Museum</a>
       </div>
@@ -246,6 +491,89 @@ function InfoTile({ icon: Icon, title, text }: { icon: typeof Clock3; title: str
       <h3>{title}</h3>
       <p>{text}</p>
     </article>
+  );
+}
+
+function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; visited: boolean; onClose: () => void }) {
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const updateTarget = () => {
+      setPortalTarget((document.fullscreenElement as HTMLElement) ?? document.body);
+    };
+    updateTarget();
+    document.addEventListener('fullscreenchange', updateTarget);
+    return () => document.removeEventListener('fullscreenchange', updateTarget);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  const hasPhotos = artifact.photos.length > 0;
+  const hasCards = artifact.cards.length > 0;
+
+  if (!portalTarget) return null;
+
+  return createPortal(
+    <div className="artifact-modal-backdrop" onClick={onClose} role="presentation">
+      <div className="artifact-modal" role="dialog" aria-modal="true" aria-labelledby="artifact-modal-title" onClick={(e) => e.stopPropagation()}>
+        <header className="artifact-modal-head">
+          <div>
+            <p className="eyebrow small"><Sparkles size={12} /> Artefak Museum Mpu Tantular</p>
+            <h3 id="artifact-modal-title">{artifact.name}</h3>
+            {visited ? (
+              <p className="artifact-status visited"><Check size={14} /> Sudah dilihat</p>
+            ) : (
+              <p className="artifact-status">Baru ditemukan</p>
+            )}
+          </div>
+          <button type="button" className="artifact-close" onClick={onClose} aria-label="Tutup detail artefak">
+            <X size={22} />
+          </button>
+        </header>
+        <div className="artifact-modal-body">
+          {hasPhotos && (
+            <section className="artifact-pane">
+              <p className="micro-label">Artefak</p>
+              <div className="artifact-photo-grid">
+                {artifact.photos.map((src, i) => (
+                  <a key={src} href={src} target="_blank" rel="noreferrer" className="artifact-photo">
+                    <img src={src} alt={`${artifact.name} foto ${i + 1}`} loading="lazy" />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+          {hasCards && (
+            <section className="artifact-pane">
+              <p className="micro-label">Kartu Pengertian</p>
+              <div className="artifact-photo-grid">
+                {artifact.cards.map((src, i) => (
+                  <a key={src} href={src} target="_blank" rel="noreferrer" className="artifact-photo card">
+                    <img src={src} alt={`Pengertian ${artifact.name} ${i + 1}`} loading="lazy" />
+                  </a>
+                ))}
+              </div>
+              <p className="artifact-hint">Klik gambar untuk membuka ukuran penuh dan membaca deskripsi.</p>
+            </section>
+          )}
+          {!hasPhotos && !hasCards && (
+            <p className="artifact-empty">Belum ada gambar untuk artefak ini.</p>
+          )}
+        </div>
+      </div>
+    </div>,
+    portalTarget,
   );
 }
 

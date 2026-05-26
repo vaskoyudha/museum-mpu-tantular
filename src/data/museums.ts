@@ -9,6 +9,16 @@ export type Museum = {
   panorama?: string;
   image: string;
   accent: string;
+  hotspots: TourHotspot[];
+};
+
+export type TourHotspot = {
+  label: string;
+  targetId: string;
+  placement: 'forward' | 'left' | 'right' | 'back' | 'up' | 'exit';
+  x: number;
+  y: number;
+  angle: number;
 };
 
 const sceneAssets = [
@@ -37,6 +47,62 @@ const sceneAssets = [
   ['13', 'Area 13 · Titik Akhir', '23-13.jpg', 'Titik terakhir dari kumpulan panorama Mpu Tantular yang tersedia.'],
 ] as const;
 
+type HotspotInput = Omit<TourHotspot, 'x' | 'y' | 'angle'> & Partial<Pick<TourHotspot, 'x' | 'y' | 'angle'>>;
+
+const hotspotDefaults: Record<TourHotspot['placement'], Pick<TourHotspot, 'x' | 'y' | 'angle'>> = {
+  forward: { x: 50, y: 69, angle: 0 },
+  left: { x: 31, y: 64, angle: -62 },
+  right: { x: 69, y: 64, angle: 62 },
+  back: { x: 17, y: 82, angle: 180 },
+  up: { x: 52, y: 58, angle: 0 },
+  exit: { x: 74, y: 70, angle: 138 },
+};
+
+const hotspot = (input: HotspotInput): TourHotspot => ({
+  ...hotspotDefaults[input.placement],
+  ...input,
+});
+
+const routeHotspots: Record<string, TourHotspot[]> = {
+  'mpu-1': [hotspot({ label: 'Masuk ke halaman depan', targetId: 'mpu-2', placement: 'forward', x: 51, y: 72 })],
+  'mpu-2': [
+    hotspot({ label: 'Belok kanan', targetId: 'mpu-3-ke-kanan', placement: 'right', x: 75, y: 60, angle: 72 }),
+    hotspot({ label: 'Belok kiri', targetId: 'mpu-3-ke-kiri', placement: 'left', x: 25, y: 60, angle: -72 }),
+  ],
+  'mpu-3-ke-kanan': [hotspot({ label: 'Lanjut ke area 4', targetId: 'mpu-4', placement: 'forward', x: 56, y: 68 })],
+  'mpu-3-ke-kiri': [hotspot({ label: 'Lanjut ke area 4', targetId: 'mpu-4', placement: 'forward', x: 46, y: 68 })],
+  'mpu-4': [
+    hotspot({ label: 'Rute kanan', targetId: 'mpu-4-ke-kanan', placement: 'right', x: 70, y: 62 }),
+    hotspot({ label: 'Masuk jalur galeri', targetId: 'mpu-5', placement: 'forward', x: 49, y: 67 }),
+  ],
+  'mpu-4-ke-kanan': [hotspot({ label: 'Lanjut ke area 5', targetId: 'mpu-5', placement: 'forward', x: 55, y: 68 })],
+  'mpu-5': [
+    hotspot({ label: 'Kanan lalu lurus', targetId: 'mpu-5-ke-kanan-terus-lurus', placement: 'right', x: 72, y: 66 }),
+    hotspot({ label: 'Masuk akses tunanetra', targetId: 'mpu-5-masuk-tunanetra', placement: 'left', x: 30, y: 66 }),
+  ],
+  'mpu-5-ke-kanan-terus-lurus': [hotspot({ label: 'Lanjut rute kanan', targetId: 'mpu-6-ke-kanan', placement: 'forward', x: 56, y: 67 })],
+  'mpu-5-masuk-tunanetra': [hotspot({ label: 'Lanjut rute kiri', targetId: 'mpu-6-ke-kiri', placement: 'forward', x: 46, y: 67 })],
+  'mpu-6-ke-kanan': [hotspot({ label: 'Menuju jalur koleksi', targetId: 'mpu-7', placement: 'forward', x: 55, y: 68 })],
+  'mpu-6-ke-kiri': [hotspot({ label: 'Menuju jalur koleksi', targetId: 'mpu-7', placement: 'forward', x: 47, y: 68 })],
+  'mpu-7': [
+    hotspot({ label: 'Arah keluar', targetId: 'mpu-8-keluar', placement: 'exit', x: 76, y: 67 }),
+    hotspot({ label: 'Lurus ke ruang berikutnya', targetId: 'mpu-8-lurus', placement: 'forward', x: 49, y: 63 }),
+  ],
+  'mpu-8-keluar': [hotspot({ label: 'Lanjut ke dasar rute atas', targetId: 'mpu-9', placement: 'forward', x: 52, y: 69 })],
+  'mpu-8-lurus': [hotspot({ label: 'Lanjut ke dasar rute atas', targetId: 'mpu-9', placement: 'forward', x: 48, y: 68 })],
+  'mpu-9': [hotspot({ label: 'Lurus naik tangga', targetId: 'mpu-9-lurus-naik-tangga', placement: 'up', x: 51, y: 56 })],
+  'mpu-9-lurus-naik-tangga': [hotspot({ label: 'Masuk titik galeri', targetId: 'mpu-10', placement: 'forward', x: 50, y: 66 })],
+  'mpu-10': [
+    hotspot({ label: 'Belok kiri', targetId: 'mpu-10-ke-kiri', placement: 'left', x: 29, y: 65 }),
+    hotspot({ label: 'Lurus', targetId: 'mpu-10-lurus', placement: 'forward', x: 51, y: 66 }),
+  ],
+  'mpu-10-ke-kiri': [hotspot({ label: 'Lanjut rute pameran', targetId: 'mpu-11', placement: 'forward', x: 47, y: 67 })],
+  'mpu-10-lurus': [hotspot({ label: 'Lanjut rute pameran', targetId: 'mpu-11', placement: 'forward', x: 51, y: 67 })],
+  'mpu-11': [hotspot({ label: 'Lurus', targetId: 'mpu-11-lurus', placement: 'forward', x: 50, y: 68 })],
+  'mpu-11-lurus': [hotspot({ label: 'Naik tangga', targetId: 'mpu-12-naik-tangga', placement: 'up', x: 52, y: 58 })],
+  'mpu-12-naik-tangga': [hotspot({ label: 'Ke titik akhir', targetId: 'mpu-13', placement: 'forward', x: 50, y: 66 })],
+};
+
 export const museums: Museum[] = sceneAssets.map(([id, highlight, file, description], index) => ({
   id: `mpu-${id}`,
   name: 'Museum Mpu Tantular',
@@ -48,6 +114,10 @@ export const museums: Museum[] = sceneAssets.map(([id, highlight, file, descript
   panorama: `/panoramas/mpu-tantular/${file}`,
   image: `/images/mpu-tantular/${file}`,
   accent: ['bronze', 'sand', 'stone', 'forest'][index % 4],
+  hotspots: [
+    ...(routeHotspots[`mpu-${id}`] ?? []),
+    ...(index > 0 ? [hotspot({ label: 'Kembali', targetId: `mpu-${sceneAssets[index - 1][0]}`, placement: 'back' })] : []),
+  ],
 }));
 
 export const museumProfile = {
