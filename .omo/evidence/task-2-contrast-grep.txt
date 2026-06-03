@@ -1,0 +1,2 @@
+2258:html[data-contrast="high"] {
+2274:html[data-contrast="high"] :focus-visible {

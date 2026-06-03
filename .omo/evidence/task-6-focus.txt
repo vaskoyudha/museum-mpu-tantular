@@ -1,0 +1,21 @@
+$ grep -n "closeButtonRef\|\.focus()" src/App.tsx
+574:  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+592:      closeButtonRef.current?.focus();
+598:        target.focus();
+621:        first.focus();
+626:        last.focus();
+629:        first.focus();
+678:            ref={closeButtonRef}
+
+VERIFIED
+--------
+- closeButtonRef (useRef<HTMLButtonElement | null>) declared at line 574
+- closeButtonRef.current?.focus() called inside useEffect on modal mount (line 592),
+  wrapped in requestAnimationFrame so it runs after the portal's DOM is committed
+- previouslyFocusedRef.focus() restores focus on unmount/cleanup (line 598)
+- Focus trap focuses first / last focusable when tab cycles outside dialog
+  (lines 621, 626, 629)
+- close button receives the ref at line 678
+
+Acceptance: ArtifactModal focuses the close button when opened; on close, focus
+returns to the element that opened the modal.

@@ -1,0 +1,2 @@
+src/App.tsx:42:const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
+src/hooks/useA11yPrefs.ts:23:const STORAGE_KEY = 'mpu-tantular-a11y';

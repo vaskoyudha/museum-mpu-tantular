@@ -6,7 +6,9 @@
     "photos": [
       "arca-dwarapala-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-2",
@@ -15,7 +17,9 @@
     "photos": [
       "lingga-yoni-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5",
@@ -26,7 +30,9 @@
     ],
     "cards": [
       "fosil-bofidae-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5",
@@ -37,7 +43,9 @@
     ],
     "cards": [
       "fosil-kerbau-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5",
@@ -50,7 +58,9 @@
     "cards": [
       "tengkorak-manusia-purba-card.jpg",
       "tengkorak-manusia-purba-card-2.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5",
@@ -62,7 +72,9 @@
     ],
     "cards": [
       "batuan-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5-ke-kanan-terus-lurus",
@@ -71,7 +83,9 @@
     "photos": [
       "cikar-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5-ke-kanan-terus-lurus",
@@ -80,7 +94,9 @@
     "photos": [
       "dokar-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5-masuk-tunanetra",
@@ -89,7 +105,9 @@
     "photos": [
       "lampu-gantung-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5-masuk-tunanetra",
@@ -100,7 +118,9 @@
     ],
     "cards": [
       "louis-braille-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-5-masuk-tunanetra",
@@ -112,7 +132,9 @@
     ],
     "cards": [
       "pesawat-telepon-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kanan",
@@ -122,7 +144,9 @@
       "fosil-kayu-jati-photo.jpg",
       "fosil-kayu-jati-photo-2.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kanan",
@@ -133,7 +157,9 @@
     ],
     "cards": [
       "ganesa-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kanan",
@@ -144,7 +170,9 @@
     ],
     "cards": [
       "hiasan-garudeya-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kiri",
@@ -155,7 +183,9 @@
     ],
     "cards": [
       "moko-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kiri",
@@ -165,7 +195,9 @@
       "benda-terakota-majapahit-photo.jpg",
       "benda-terakota-majapahit-photo-2.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kiri",
@@ -175,7 +207,9 @@
       "patheon-dewa-budha-photo.jpg",
       "patheon-dewa-budha-photo-2.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-6-ke-kiri",
@@ -186,7 +220,9 @@
     ],
     "cards": [
       "sarana-upacara-hindu-budha-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-7",
@@ -197,7 +233,9 @@
     ],
     "cards": [
       "kerapan-sapi-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-7",
@@ -208,7 +246,9 @@
     ],
     "cards": [
       "maket-kapal-insulinde-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-7",
@@ -219,7 +259,9 @@
     ],
     "cards": [
       "meriam-lela-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-7",
@@ -230,7 +272,9 @@
     ],
     "cards": [
       "thuk-thuk-kentongan-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-8-lurus",
@@ -243,7 +287,9 @@
     "cards": [
       "batik-pesisiran-card.jpg",
       "batik-pesisiran-card-2.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-8-lurus",
@@ -253,7 +299,9 @@
       "topeng-malang-photo.jpg",
       "topeng-malang-photo-2.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-8-lurus",
@@ -264,7 +312,9 @@
     ],
     "cards": [
       "wayang-beber-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-9",
@@ -273,7 +323,9 @@
     "photos": [],
     "cards": [
       "prasasti-kamalgyan-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-9-lurus-naik-tangga",
@@ -284,7 +336,9 @@
     ],
     "cards": [
       "kipas-angin-uap-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-9-lurus-naik-tangga",
@@ -293,7 +347,9 @@
     "photos": [
       "mesin-ketik-9-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-9-lurus-naik-tangga",
@@ -304,7 +360,9 @@
     ],
     "cards": [
       "sepeda-motor-daimler-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-10-lurus",
@@ -315,7 +373,9 @@
     ],
     "cards": [
       "kapal-maru-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-10-lurus",
@@ -324,7 +384,9 @@
     "photos": [
       "mesin-ketik-10-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-10-lurus",
@@ -335,7 +397,9 @@
     ],
     "cards": [
       "sepeda-tinggi-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-11-lurus",
@@ -345,7 +409,9 @@
       "maket-torpedo-lynx-photo.jpg",
       "maket-torpedo-lynx-photo-2.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-12-naik-tangga",
@@ -356,7 +422,9 @@
     ],
     "cards": [
       "wayang-card.jpg"
-    ]
+    ],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-12-naik-tangga",
@@ -365,7 +433,9 @@
     "photos": [
       "wayang-kulit-bangkalan-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-13",
@@ -374,7 +444,9 @@
     "photos": [
       "jaran-kepang-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   },
   {
     "sceneId": "mpu-13",
@@ -383,6 +455,8 @@
     "photos": [
       "reog-photo.jpg"
     ],
-    "cards": []
+    "cards": [],
+    "description": "",
+    "voiceover": ""
   }
 ]

@@ -1,0 +1,14 @@
+$ grep -n "aria-describedby\|artifact-modal-desc" src/App.tsx
+663:        aria-describedby="artifact-modal-desc"
+670:            <p id="artifact-modal-desc" className="artifact-modal-description">{description}</p>
+
+VERIFIED
+--------
+- Dialog <div role="dialog"> at line 663 declares aria-describedby="artifact-modal-desc"
+- Target <p> at line 670 has matching id="artifact-modal-desc" and contains
+  artifact.description (or fallback "Artefak dari Museum Mpu Tantular" when empty)
+- IDs match exactly between the two elements
+- description is computed at line 643:
+    const description = artifact.description || 'Artefak dari Museum Mpu Tantular';
+
+Acceptance: aria-describedby points to a real <p> with descriptive text.

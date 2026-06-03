@@ -1,0 +1,6 @@
+26:import LiveAnnouncer, { useLiveAnnouncer } from './components/LiveAnnouncer';
+45:  const { announce } = useLiveAnnouncer();
+81:    announce("Berpindah ke " + m.highlight);
+87:    announce("Membuka detail artefak: " + artifact.name);
+92:    announce("Menutup detail");
+98:      <LiveAnnouncer />

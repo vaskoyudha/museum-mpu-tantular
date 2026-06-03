@@ -17,29 +17,37 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { audienceBenefits, galleryItems, museumProfile, museums, type Museum } from './data/museums';
 import { artifactsByScene, totalArtifacts, type Artifact } from './data/artifacts';
 import { TourViewer } from './components/TourViewer';
+import SkipLink from './components/SkipLink';
+import LiveAnnouncer, { useLiveAnnouncer } from './components/LiveAnnouncer';
+import AccessibilityWidget from './components/AccessibilityWidget';
+import CatalogSection from './components/CatalogSection';
+import ArtifactVoiceover from './components/ArtifactVoiceover';
 
 const navItems = [
   { label: 'Museum', href: '#museums' },
   { label: 'Tur 360', href: '#tour-tour' },
   { label: 'Cerita', href: '#stories' },
   { label: 'Kunjungi', href: '#visit' },
+  { label: 'Katalog', href: '#katalog' },
 ];
 
 const mobileTabs = [
   { id: 'top', label: 'Beranda', icon: Home },
   { id: 'museums', label: 'Museum', icon: Landmark },
   { id: 'tour-tour', label: 'Tur 360', icon: Compass },
+  { id: 'katalog', label: 'Katalog', icon: BookOpen },
   { id: 'visit', label: 'Kunjungi', icon: MapPin },
 ] as const;
 
 const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
 
 function App() {
+  const { announce } = useLiveAnnouncer();
   const [activeMuseum, setActiveMuseum] = useState<Museum>(museums[0]);
   const [activeArtifact, setActiveArtifact] = useState<Artifact | null>(null);
   const [visitedArtifacts, setVisitedArtifacts] = useState<Set<string>>(() => {
@@ -73,31 +81,50 @@ function App() {
     });
   }, []);
 
+  const handleSelectMuseum = useCallback((m: Museum) => {
+    setActiveMuseum(m);
+    announce("Berpindah ke " + m.highlight);
+  }, [announce]);
+
   const handleArtifactSelect = useCallback((artifact: Artifact) => {
     setActiveArtifact(artifact);
     markVisited(artifact.id);
-  }, [markVisited]);
+    announce("Membuka detail artefak: " + artifact.name);
+  }, [announce, markVisited]);
+
+  const handleArtifactClose = useCallback(() => {
+    setActiveArtifact(null);
+    announce("Menutup detail");
+  }, [announce]);
 
   return (
-    <main className="site-shell">
+    <main id="main" className="site-shell">
+      <SkipLink />
+      <LiveAnnouncer />
       <Header />
       <Hero />
-      <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={setActiveMuseum} />
+      <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={handleSelectMuseum} />
       <TourSection
         activeMuseum={activeMuseum}
         museums={museums}
-        onSelect={setActiveMuseum}
+        onSelect={handleSelectMuseum}
         visitedArtifacts={visitedArtifacts}
+        onArtifactSelect={handleArtifactSelect}
+      />
+      <CatalogSection
+        museums={museums}
+        artifactsByScene={artifactsByScene}
         onArtifactSelect={handleArtifactSelect}
       />
       <AudienceSection />
       <GalleryKunjungiSection />
+      <AccessibilityWidget />
       <MobileTabBar />
       {activeArtifact ? (
         <ArtifactModal
           artifact={activeArtifact}
           visited={visitedArtifacts.has(activeArtifact.id)}
-          onClose={() => setActiveArtifact(null)}
+          onClose={handleArtifactClose}
         />
       ) : null}
     </main>
@@ -191,11 +218,12 @@ function Hero() {
             <a className="button button-primary" href="#tour-tour"><Compass size={20} /> Mulai Tur 360</a>
             <a className="button button-ghost" href="#museums"><Landmark size={20} /> Jelajahi Museum</a>
           </div>
-          <div className="hero-proof" aria-label="Sorotan Museum360">
+          {/* a11y: <section> accepts aria-label natively (div does not) */}
+          <section className="hero-proof" aria-label="Sorotan Museum360">
             <span><Compass size={22} /> 23 titik<br /><small>Rute Mpu Tantular</small></span>
             <span><Sparkles size={22} /> Panorama asli<br /><small>8000×4000 px</small></span>
             <span><MapPin size={22} /> Sidoarjo<br /><small>Jawa Timur</small></span>
-          </div>
+          </section>
         </div>
 
         <aside className="hero-visual" aria-label="Cuplikan panorama">
@@ -336,8 +364,9 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
                         <span className="pill-num">{String(idx + 1).padStart(2, '0')}</span>
                         <span className="pill-label">{stripPrefix(scene.highlight)}</span>
                         {sceneArtifactCount > 0 ? (
-                          <span className="pill-artifact-badge" aria-label={`${sceneArtifactCount} artefak di scene ini`}>
-                            <Sparkles size={10} strokeWidth={2.6} />
+                          // a11y: role="img" memberi labelable name pada span agar aria-label valid
+                          <span className="pill-artifact-badge" role="img" aria-label={`${sceneArtifactCount} artefak di scene ini`}>
+                            <Sparkles size={10} strokeWidth={2.6} aria-hidden="true" />
                             {sceneArtifactCount}
                           </span>
                         ) : null}
@@ -553,6 +582,9 @@ function InfoTile({ icon: Icon, title, text }: { icon: typeof Clock3; title: str
 
 function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; visited: boolean; onClose: () => void }) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const updateTarget = () => {
@@ -563,9 +595,50 @@ function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; vis
     return () => document.removeEventListener('fullscreenchange', updateTarget);
   }, []);
 
+  // a11y: simpan fokus sebelumnya lalu pindahkan ke tombol tutup; kembalikan saat ditutup
+  useEffect(() => {
+    if (!portalTarget) return;
+    previouslyFocusedRef.current = (document.activeElement as HTMLElement | null) ?? null;
+    const frame = window.requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      const target = previouslyFocusedRef.current;
+      if (target && typeof target.focus === 'function') {
+        target.focus();
+      }
+    };
+  }, [portalTarget]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      // a11y: focus trap — Tab/Shift+Tab berputar dalam dialog
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = (document.activeElement as HTMLElement | null) ?? null;
+      // Jika fokus keluar dari dialog, kembalikan ke elemen pertama
+      if (!dialogRef.current.contains(active)) {
+        e.preventDefault();
+        first.focus();
+        return;
+      }
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
@@ -578,28 +651,53 @@ function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; vis
 
   const hasPhotos = artifact.photos.length > 0;
   const hasCards = artifact.cards.length > 0;
+  const description = artifact.description || 'Artefak dari Museum Mpu Tantular';
 
   if (!portalTarget) return null;
 
   return createPortal(
-    <div className="artifact-modal-backdrop" onClick={onClose} role="presentation">
-      <div className="artifact-modal" role="dialog" aria-modal="true" aria-labelledby="artifact-modal-title" onClick={(e) => e.stopPropagation()}>
+    <button
+      type="button"
+      className="artifact-modal-backdrop"
+      onClick={(e) => {
+        // Tutup hanya saat klik langsung pada backdrop, bukan anak dialognya
+        if (e.target === e.currentTarget) onClose();
+      }}
+      aria-label="Tutup detail artefak"
+    >
+      <div
+        ref={dialogRef}
+        className="artifact-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="artifact-modal-title"
+        aria-describedby="artifact-modal-desc"
+      >
         <span className="artifact-sheet-handle" aria-hidden="true" />
         <header className="artifact-modal-head">
           <div>
             <p className="eyebrow small"><Sparkles size={12} /> Artefak Museum Mpu Tantular</p>
             <h3 id="artifact-modal-title">{artifact.name}</h3>
+            <p id="artifact-modal-desc" className="artifact-modal-description">{description}</p>
             {visited ? (
               <p className="artifact-status visited"><Check size={14} /> Sudah dilihat</p>
             ) : (
               <p className="artifact-status">Baru ditemukan</p>
             )}
           </div>
-          <button type="button" className="artifact-close" onClick={onClose} aria-label="Tutup detail artefak">
+          <button
+            ref={closeButtonRef}
+            type="button"
+            className="artifact-close"
+            onClick={onClose}
+            aria-label="Tutup detail artefak"
+          >
             <X size={22} />
           </button>
         </header>
         <div className="artifact-modal-body">
+          {/* Voiceover (Tugas 10) */}
+          <ArtifactVoiceover src={artifact.voiceover || undefined} title={artifact.name} />
           {hasPhotos && (
             <section className="artifact-pane">
               <p className="micro-label">Artefak</p>
@@ -630,7 +728,7 @@ function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; vis
           )}
         </div>
       </div>
-    </div>,
+    </button>,
     portalTarget,
   );
 }

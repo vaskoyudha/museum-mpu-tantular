@@ -9,6 +9,8 @@ export type Artifact = {
   x: number;
   y: number;
   angle: number;
+  description?: string;
+  voiceover?: string;
 };
 
 const ARTEFAK_BASE = '/artefak/mpu-tantular/';
@@ -34,6 +36,8 @@ type RawArtifact = {
   name: string;
   photos: string[];
   cards: string[];
+  description?: string;
+  voiceover?: string;
 };
 
 const grouped = new Map<string, RawArtifact[]>();
@@ -56,6 +60,8 @@ export const artifacts: Artifact[] = (catalog as RawArtifact[]).map((item) => {
     x: xPattern(idx, total),
     y: yPattern(idx),
     angle: anglePattern(idx, total),
+    description: item.description ?? '',
+    voiceover: item.voiceover ?? '',
   };
 });
 

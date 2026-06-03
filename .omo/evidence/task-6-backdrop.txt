@@ -1,0 +1,35 @@
+Source: src/App.tsx:646-656 (was 585-590 pre-edit; file shifted by 60 lines due
+to the modal retrofit). The backdrop is now a real <button> element rather than
+a <div> with role=button.
+
+Chosen approach: convert to <button> (option 1 from the task spec).
+
+Code:
+    <button
+      type="button"
+      className="artifact-modal-backdrop"
+      onClick={(e) => {
+        // Tutup hanya saat klik langsung pada backdrop, bukan anak dialognya
+        if (e.target === e.currentTarget) onClose();
+      }}
+      aria-label="Tutup detail artefak"
+    >
+
+Why this option:
+- Real <button> is implicitly keyboard-accessible: Enter and Space both fire
+  a click by default. No need for onKeyDown handler or tabIndex={0}.
+- A real <button> is also in the natural tab order without an explicit
+  tabIndex, which is what WAI-ARIA expects for activatable controls.
+- The existing global CSS reset at global.css:46
+    button { font: inherit; cursor: pointer; background: none; border: 0; color: inherit; }
+  already strips all browser-default button styling, so the existing
+  .artifact-modal-backdrop class applies as-is. ZERO new CSS required.
+- The modal's <div role="dialog"> no longer needs onClick={(e) => e.stopPropagation()};
+  instead the backdrop checks e.target === e.currentTarget to close only on
+  direct backdrop click, not on bubbled clicks from inside the dialog.
+- LSP flagged the role="button" div as a smell ("can be changed to <button>"),
+  and the button element is the cleaner / more idiomatic choice.
+
+Acceptance: backdrop is keyboard-accessible. Click closes (only on direct
+backdrop, not on dialog body); Enter and Space also close via native button
+semantics. No onKeyDown, no tabIndex, no role required.

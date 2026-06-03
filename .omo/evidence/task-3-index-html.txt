@@ -1,0 +1,2 @@
+21:          var raw = localStorage.getItem('mpu-tantular-a11y');
+32:    <script type="module" src="/src/main.tsx"></script>

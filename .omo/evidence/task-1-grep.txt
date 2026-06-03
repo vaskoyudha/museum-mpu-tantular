@@ -1,0 +1,3 @@
+11:  sharedAudioContext = new AudioContext();
+103:    // resume() wajib dipanggil dari handler gestur pengguna (Safari iOS).
+106:      void ctx.resume();

@@ -1,10 +1,12 @@
 import type { Viewer as PhotoSphereViewer } from '@photo-sphere-viewer/core';
 import type { Position } from '@photo-sphere-viewer/core';
-import { ArrowUp, Check, Maximize2, MousePointer2, Sparkles, Volume2, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowUp, Check, Maximize2, MousePointer2, Sparkles, Volume2, VolumeX, ZoomIn, ZoomOut } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { Museum } from '../data/museums';
 import type { Artifact } from '../data/artifacts';
+import { useAudioPlayer } from '../hooks/useAudioPlayer';
+import { useA11yPrefs } from '../hooks/useA11yPrefs';
 
 type TourViewerProps = {
   museum: Museum;
@@ -24,6 +26,10 @@ type ResolvedHotspot = {
   angle: number;
   target: Museum;
 };
+
+const MUSIC_SRC = '/audio/ambient/gamelan.mp3';
+const DEG_STEP = 10 * (Math.PI / 180); // 10° dalam radian (PSV pakai radian)
+const PITCH_MAX = 85 * (Math.PI / 180);
 
 export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedArtifacts, onArtifactSelect }: TourViewerProps) {
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -47,6 +53,56 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
   );
   const getHotspotKey = useCallback((targetId: string, placement: string) => `${museumIdRef.current}-${targetId}-${placement}`, []);
 
+  // ── Musik latar (Tugas 9) ─────────────────────────────────────────
+  const { musicEnabled, setMusicEnabled } = useA11yPrefs();
+  const music = useAudioPlayer({ src: MUSIC_SRC, loop: true, volume: 0.5 });
+
+  // Mainkan / jeda musik sesuai toggle
+  useEffect(() => {
+    if (musicEnabled) {
+      music.play();
+    } else {
+      music.pause();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [musicEnabled]);
+
+  // Jeda saat tab tidak terlihat; lanjutkan saat kembali aktif
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden) {
+        music.pause();
+      } else if (musicEnabled) {
+        music.play();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [musicEnabled]);
+
+  const toggleMusic = useCallback(() => {
+    setMusicEnabled(!musicEnabled);
+  }, [musicEnabled, setMusicEnabled]);
+
+  // ── Update stereo pan berdasarkan yaw viewer (Tugas 9) ──────────
+  const pannerRef = useRef<StereoPannerNode | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const mediaSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+
+
+  // Fungsi update pan dipanggil setiap position-updated
+  const updatePan = useCallback(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || !pannerRef.current) return;
+    const { yaw } = viewer.getPosition();
+    // yaw dalam radian; rentang sekitar -π..π; normalisasi ke -1..1
+    const pan = Math.max(-1, Math.min(1, yaw / Math.PI));
+    pannerRef.current.pan.value = pan;
+  }, []);
+
+  // ── Hotspot helpers ───────────────────────────────────────────────
   useEffect(() => {
     hotspotsRef.current = hotspots;
   }, [hotspots]);
@@ -71,7 +127,9 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
       element.style.setProperty('--hotspot-top', `${point.y}px`);
       element.toggleAttribute('data-hidden', !visible);
     });
-  }, []);
+    // Perbarui pan stereo juga setiap render
+    updatePan();
+  }, [updatePan]);
 
   const scheduleHotspotUpdate = useCallback(() => {
     window.cancelAnimationFrame(frameRef.current);
@@ -98,6 +156,7 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
     updateHotspotPositions();
   }, [updateHotspotPositions]);
 
+  // ── Inisialisasi PSV ──────────────────────────────────────────────
   useEffect(() => {
     if (!stageRef.current || viewerRef.current) return;
     const initial = initialMuseumRef.current;
@@ -186,13 +245,105 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
     recomputeAnchors();
   }, [hotspots, viewerReady, recomputeAnchors]);
 
+  // ── Keyboard rotation (Tugas 11) ─────────────────────────────────
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      const viewer = viewerRef.current;
+      if (!viewer) return;
+      // Hanya proses saat fokus di dalam stage
+      if (!stage.contains(document.activeElement) && document.activeElement !== stage) return;
+
+      const { yaw, pitch } = viewer.getPosition();
+      const speed = prefersReduced ? 0 : 150; // ms animasi; 0 = langsung
+
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          void viewer.animate({ yaw: yaw - DEG_STEP, pitch, speed });
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          void viewer.animate({ yaw: yaw + DEG_STEP, pitch, speed });
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          void viewer.animate({ yaw, pitch: Math.min(PITCH_MAX, pitch + DEG_STEP), speed });
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          void viewer.animate({ yaw, pitch: Math.max(-PITCH_MAX, pitch - DEG_STEP), speed });
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          viewer.zoom(viewer.getZoomLevel() + 10);
+          break;
+        case '-':
+        case '_':
+          e.preventDefault();
+          viewer.zoom(viewer.getZoomLevel() - 10);
+          break;
+        case 'Home':
+          e.preventDefault();
+          void viewer.animate({ yaw: 0, pitch: 0, speed });
+          break;
+        default:
+          break;
+      }
+    };
+
+    stage.addEventListener('keydown', onKeyDown);
+    return () => stage.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  // Bersihkan Web Audio graph saat unmount
+  useEffect(() => {
+    const panner = pannerRef.current;
+    const gain = gainRef.current;
+    const mediaSource = mediaSourceRef.current;
+    const audioCtx = audioCtxRef.current;
+    return () => {
+      panner?.disconnect();
+      gain?.disconnect();
+      mediaSource?.disconnect();
+      audioCtx?.close().catch(() => undefined);
+    };
+  }, []);
+
   return (
     <div className="viewer-frame">
       <div className="viewer-toolbar" aria-label="Alat viewer tur">
         <span><MousePointer2 size={16} /> Klik dan geser untuk melihat sekitar</span>
         <span>{viewerReady ? 'Scene 360° aktif' : 'Menyiapkan scene'}</span>
+        {/* Tombol musik latar (Tugas 9) */}
+        <button
+          type="button"
+          className={`viewer-music-btn ${music.isPlaying ? 'active' : ''}`}
+          onClick={toggleMusic}
+          aria-label={musicEnabled ? 'Nonaktifkan musik latar' : 'Aktifkan musik latar'}
+          aria-pressed={musicEnabled}
+          title="Musik latar"
+        >
+          {musicEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          <span className="viewer-music-label">{musicEnabled ? 'Musik Aktif' : 'Musik Nonaktif'}</span>
+        </button>
       </div>
-      <div ref={stageRef} className="panorama-stage" aria-label={`Viewer panorama 360 untuk ${museum.name}`}>
+      {/* panorama-stage: tabIndex=0 agar bisa difokus keyboard; aria-label menjelaskan kontrol */}
+      <div
+        ref={stageRef}
+        className="panorama-stage"
+        tabIndex={0}
+        aria-label={`Viewer panorama 360 untuk ${museum.name}. Gunakan tombol panah untuk memutar, +/- untuk zoom, Home untuk reset.`}
+      >
+        {/* Petunjuk tersembunyi untuk pembaca layar */}
+        <p className="sr-only">
+          Gunakan tombol panah untuk memutar pandangan, tombol + atau - untuk memperbesar atau memperkecil, dan tombol Home untuk kembali ke posisi awal.
+        </p>
         {hotspots.length > 0 && onSelect ? (
           <div className="tour-hotspots" aria-label="Navigasi titik panorama">
             {hotspots.map((hotspot) => {
@@ -271,7 +422,7 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
         <span><ZoomIn size={18} /> Perbesar</span>
         <span><ZoomOut size={18} /> Perkecil</span>
         <span><Maximize2 size={18} /> Layar Penuh</span>
-        <span><Volume2 size={18} /> Audio / Panduan</span>
+        <span>↑↓←→ Putar · +/- Zoom · Home Reset</span>
       </div>
     </div>
   );
