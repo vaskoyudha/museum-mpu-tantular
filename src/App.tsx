@@ -28,26 +28,29 @@ import AccessibilityWidget from './components/AccessibilityWidget';
 import CatalogSection from './components/CatalogSection';
 import ArtifactVoiceover from './components/ArtifactVoiceover';
 
-const navItems = [
-  { label: 'Museum', href: '#museums' },
-  { label: 'Tur 360', href: '#tour-tour' },
-  { label: 'Cerita', href: '#stories' },
-  { label: 'Kunjungi', href: '#visit' },
-  { label: 'Katalog', href: '#katalog' },
+type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog';
+
+const navPageItems: { label: string; page: AppPage }[] = [
+  { label: 'Museum', page: 'museum' },
+  { label: 'Tur 360', page: 'tour' },
+  { label: 'Cerita', page: 'stories' },
+  { label: 'Kunjungi', page: 'visit' },
+  { label: 'Katalog', page: 'katalog' },
 ];
 
-const mobileTabs = [
-  { id: 'top', label: 'Beranda', icon: Home },
-  { id: 'museums', label: 'Museum', icon: Landmark },
-  { id: 'tour-tour', label: 'Tur 360', icon: Compass },
+const mobilePageTabs: { id: AppPage; label: string; icon: typeof Home }[] = [
+  { id: 'home', label: 'Beranda', icon: Home },
+  { id: 'museum', label: 'Museum', icon: Landmark },
+  { id: 'tour', label: 'Tur 360', icon: Compass },
   { id: 'katalog', label: 'Katalog', icon: BookOpen },
   { id: 'visit', label: 'Kunjungi', icon: MapPin },
-] as const;
+];
 
 const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
 
 function App() {
   const { announce } = useLiveAnnouncer();
+  const [activePage, setActivePage] = useState<AppPage>('home');
   const [activeMuseum, setActiveMuseum] = useState<Museum>(museums[0]);
   const [activeArtifact, setActiveArtifact] = useState<Artifact | null>(null);
   const [visitedArtifacts, setVisitedArtifacts] = useState<Set<string>>(() => {
@@ -86,6 +89,20 @@ function App() {
     announce("Berpindah ke " + m.highlight);
   }, [announce]);
 
+  const handleNavigate = useCallback((page: AppPage) => {
+    setActivePage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const pageLabels: Record<AppPage, string> = {
+      home: 'Beranda',
+      museum: 'Halaman Museum',
+      tour: 'Tur 360°',
+      stories: 'Cerita',
+      visit: 'Kunjungi',
+      katalog: 'Katalog Aksesibilitas',
+    };
+    announce('Membuka ' + pageLabels[page]);
+  }, [announce]);
+
   const handleArtifactSelect = useCallback((artifact: Artifact) => {
     setActiveArtifact(artifact);
     markVisited(artifact.id);
@@ -101,25 +118,82 @@ function App() {
     <main id="main" className="site-shell">
       <SkipLink />
       <LiveAnnouncer />
-      <Header />
-      <Hero />
-      <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={handleSelectMuseum} />
-      <TourSection
-        activeMuseum={activeMuseum}
-        museums={museums}
-        onSelect={handleSelectMuseum}
-        visitedArtifacts={visitedArtifacts}
-        onArtifactSelect={handleArtifactSelect}
-      />
-      <CatalogSection
-        museums={museums}
-        artifactsByScene={artifactsByScene}
-        onArtifactSelect={handleArtifactSelect}
-      />
-      <AudienceSection />
-      <GalleryKunjungiSection />
+      <Header activePage={activePage} onNavigate={handleNavigate} />
+
+      {/* ── Beranda (Home) — semua section berurutan ── */}
+      {activePage === 'home' && (
+        <div className="page-view" key="home">
+          <Hero />
+          <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={handleSelectMuseum} />
+          <TourSection
+            activeMuseum={activeMuseum}
+            museums={museums}
+            onSelect={handleSelectMuseum}
+            visitedArtifacts={visitedArtifacts}
+            onArtifactSelect={handleArtifactSelect}
+          />
+          <CatalogSection
+            museums={museums}
+            artifactsByScene={artifactsByScene}
+            onArtifactSelect={handleArtifactSelect}
+          />
+          <AudienceSection />
+          <GalleryKunjungiSection />
+        </div>
+      )}
+
+      {/* ── Halaman Museum ── */}
+      {activePage === 'museum' && (
+        <div className="page-view page-view--full" key="museum">
+          <PageHeader title="Rute Museum Mpu Tantular" subtitle="Semua 23 titik panorama" onBack={() => handleNavigate('home')} />
+          <FeaturedMuseum museums={primaryMuseum} activeId={activeMuseum.id} onSelect={handleSelectMuseum} />
+        </div>
+      )}
+
+      {/* ── Halaman Tur 360 ── */}
+      {activePage === 'tour' && (
+        <div className="page-view page-view--full" key="tour">
+          <PageHeader title="Tur 360°" subtitle="Jelajahi Museum Mpu Tantular secara virtual" onBack={() => handleNavigate('home')} />
+          <TourSection
+            activeMuseum={activeMuseum}
+            museums={museums}
+            onSelect={handleSelectMuseum}
+            visitedArtifacts={visitedArtifacts}
+            onArtifactSelect={handleArtifactSelect}
+          />
+        </div>
+      )}
+
+      {/* ── Halaman Cerita ── */}
+      {activePage === 'stories' && (
+        <div className="page-view page-view--full" key="stories">
+          <PageHeader title="Cerita Museum" subtitle="Dibangun dari foto asli Museum Mpu Tantular" onBack={() => handleNavigate('home')} />
+          <AudienceSection />
+        </div>
+      )}
+
+      {/* ── Halaman Kunjungi ── */}
+      {activePage === 'visit' && (
+        <div className="page-view page-view--full" key="visit">
+          <PageHeader title="Rencanakan Kunjungan" subtitle="Galeri warisan & informasi kunjungan" onBack={() => handleNavigate('home')} />
+          <GalleryKunjungiSection />
+        </div>
+      )}
+
+      {/* ── Halaman Katalog ── */}
+      {activePage === 'katalog' && (
+        <div className="page-view page-view--full" key="katalog">
+          <PageHeader title="Katalog Aksesibilitas" subtitle="Semua koleksi dalam format teks" onBack={() => handleNavigate('home')} />
+          <CatalogSection
+            museums={museums}
+            artifactsByScene={artifactsByScene}
+            onArtifactSelect={handleArtifactSelect}
+          />
+        </div>
+      )}
+
       <AccessibilityWidget />
-      <MobileTabBar />
+      <MobileTabBar activePage={activePage} onNavigate={handleNavigate} />
       {activeArtifact ? (
         <ArtifactModal
           artifact={activeArtifact}
@@ -131,70 +205,75 @@ function App() {
   );
 }
 
-function MobileTabBar() {
-  const [activeId, setActiveId] = useState<string>('top');
-
-  useEffect(() => {
-    const ids = mobileTabs.map((t) => t.id);
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target.id) setActiveId(visible.target.id);
-      },
-      { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] },
-    );
-    sections.forEach((s) => {
-      observer.observe(s);
-    });
-    return () => observer.disconnect();
-  }, []);
-
+function MobileTabBar({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (page: AppPage) => void }) {
   return (
     <nav className="mobile-tabbar" aria-label="Navigasi seluler">
-      {mobileTabs.map((tab) => {
+      {mobilePageTabs.map((tab) => {
         const Icon = tab.icon;
-        const isActive = tab.id === activeId;
+        const isActive = tab.id === activePage;
         return (
-          <a
+          <button
             key={tab.id}
-            href={`#${tab.id}`}
+            type="button"
             className={`mobile-tab ${isActive ? 'is-active' : ''}`}
             aria-current={isActive ? 'page' : undefined}
+            onClick={() => onNavigate(tab.id)}
           >
             <span className="mobile-tab-icon" aria-hidden="true">
               <Icon size={22} strokeWidth={2.2} />
             </span>
             <span className="mobile-tab-label">{tab.label}</span>
-          </a>
+          </button>
         );
       })}
     </nav>
   );
 }
 
-function Header() {
+function Header({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (page: AppPage) => void }) {
   return (
     <header className="glass-nav" aria-label="Navigasi utama">
-      <a className="brand-mark" href="#top" aria-label="beranda Museum360 Nusantara">
+      <button
+        className="brand-mark"
+        type="button"
+        aria-label="Kembali ke beranda Museum360 Nusantara"
+        onClick={() => onNavigate('home')}
+      >
         <span className="brand-symbol">✦</span>
         <span><strong>Museum360</strong> Nusantara</span>
-      </a>
+      </button>
       <nav className="nav-links" aria-label="Bagian situs">
-        {navItems.map((item) => (
-          <a key={item.label} href={item.href}>{item.label}</a>
+        {navPageItems.map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            className={`nav-page-btn ${activePage === item.page ? 'is-active' : ''}`}
+            aria-current={activePage === item.page ? 'page' : undefined}
+            onClick={() => onNavigate(item.page)}
+          >
+            {item.label}
+          </button>
         ))}
       </nav>
       <button className="icon-button" type="button" aria-label="Buka menu">
         <Menu size={22} />
       </button>
     </header>
+  );
+}
+
+function PageHeader({ title, subtitle, onBack }: { title: string; subtitle: string; onBack: () => void }) {
+  return (
+    <div className="page-header-banner">
+      <button type="button" className="page-header-back" onClick={onBack} aria-label="Kembali ke beranda">
+        <ArrowRight size={18} className="flip" />
+        <span>Beranda</span>
+      </button>
+      <div className="page-header-text">
+        <h1 className="page-header-title">{title}</h1>
+        <p className="page-header-subtitle">{subtitle}</p>
+      </div>
+    </div>
   );
 }
 

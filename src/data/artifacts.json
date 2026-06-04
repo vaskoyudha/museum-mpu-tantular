@@ -4,7 +4,7 @@
     "slug": "arca-dwarapala",
     "name": "Arca Dwarapala",
     "photos": [
-      "arca-dwarapala-photo.jpg"
+      "arca-dwarapala_ruangan-2_2.jpg"
     ],
     "cards": [],
     "description": "",
@@ -15,7 +15,7 @@
     "slug": "lingga-yoni",
     "name": "Lingga Yoni",
     "photos": [
-      "lingga-yoni-photo.jpg"
+      "lingga-yoni_ruangan-2_2.jpg"
     ],
     "cards": [],
     "description": "",
@@ -26,84 +26,86 @@
     "slug": "fosil-bofidae",
     "name": "Fosil Bofidae",
     "photos": [
-      "fosil-bofidae-photo.jpg"
+      "fosil-bofidae_ruangan-5_5.jpg",
+      "fossil_ruang-5_5(1).jpg",
+      "fossil_ruang-5_5.jpg"
     ],
     "cards": [
-      "fosil-bofidae-card.jpg"
+      "(pengertian)-fosil-bofidae_-ruangan-5_5.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/Fosil Bofidae.m4a"
   },
   {
     "sceneId": "mpu-5",
     "slug": "fosil-kerbau",
     "name": "Fosil Kerbau",
     "photos": [
-      "fosil-kerbau-photo.jpg"
+      "fosil-kerbau_ruangan-5_5.jpg"
     ],
     "cards": [
-      "fosil-kerbau-card.jpg"
+      "penjelasan-fosil-kerbau_ruangan-5_5.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/fosil kerbau.m4a"
   },
   {
     "sceneId": "mpu-5",
     "slug": "tengkorak-manusia-purba",
     "name": "Tengkorak Manusia Purba",
     "photos": [
-      "tengkorak-manusia-purba-photo.jpg",
-      "tengkorak-manusia-purba-photo-2.jpg"
+      "tengkorak-manusia-purba-(1)_ruangan-5_.jpg",
+      "tengkorak-manusia-purba-(2)_ruangan-5_5.jpg"
     ],
     "cards": [
-      "tengkorak-manusia-purba-card.jpg",
-      "tengkorak-manusia-purba-card-2.jpg"
+      "(pengertian-1)-tengkorak-manusia-purba_ruangan-5_5.jpg",
+      "(pengertian-2)tengkorak-manusia-purba_ruangan-5_5.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/fosil tengkorak manusia purba.m4a"
   },
   {
     "sceneId": "mpu-5",
     "slug": "batuan",
     "name": "Batuan Purba",
     "photos": [
-      "batuan-photo.jpg",
-      "batuan-photo-2.jpg"
+      "batua_ruang-5_5.jpg",
+      "batuan_ruangan-5_5.jpg"
     ],
     "cards": [
-      "batuan-card.jpg"
+      "batuan-penjelasan_ruangan-5_5.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/batuan purba.m4a"
   },
   {
     "sceneId": "mpu-5-ke-kanan-terus-lurus",
     "slug": "cikar",
     "name": "Cikar",
     "photos": [
-      "cikar-photo.jpg"
+      "cikar_ruangan-5-ke-kanan-terus-lurus_5.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/cikar.m4a"
   },
   {
     "sceneId": "mpu-5-ke-kanan-terus-lurus",
     "slug": "dokar",
     "name": "Dokar",
     "photos": [
-      "dokar-photo.jpg"
+      "dokar_ruangan-5-ke-kanan-terus-lurus_5.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/dokar.m4a"
   },
   {
     "sceneId": "mpu-5-masuk-tunanetra",
     "slug": "lampu-gantung",
     "name": "Lampu Gantung",
     "photos": [
-      "lampu-gantung-photo.jpg"
+      "lampu-gantung_ruangan-5-masuk-tunanetra_5.jpg"
     ],
     "cards": [],
     "description": "",
@@ -114,207 +116,208 @@
     "slug": "louis-braille",
     "name": "Louis Braille",
     "photos": [
-      "louis-braille-photo.jpg"
+      "louis-braille_ruang-5-masuk-tunanetra_5.jpg",
+      "sejarah-louis-braille_masuk-ruang-5-tunanetra_5.jpg"
     ],
-    "cards": [
-      "louis-braille-card.jpg"
-    ],
+    "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/louis braille..m4a"
   },
   {
     "sceneId": "mpu-5-masuk-tunanetra",
     "slug": "pesawat-telepon",
     "name": "Pesawat Telepon",
     "photos": [
-      "pesawat-telepon-photo.jpg",
-      "pesawat-telepon-photo-2.jpg"
+      "pesawat-telepon_ruang-5-mauk-tunanetra_5.jpg",
+      "pesawat-telepon_ruangan-5-masuk-tunanetra_5.jpg"
     ],
     "cards": [
-      "pesawat-telepon-card.jpg"
+      "(pengertian)pesawat-telepon_ruangan-5-masuk-tunanetra_5.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/pesawat telepon.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kanan",
     "slug": "fosil-kayu-jati",
     "name": "Fosil Kayu Jati",
     "photos": [
-      "fosil-kayu-jati-photo.jpg",
-      "fosil-kayu-jati-photo-2.jpg"
+      "fosil-kayu-jati_ruangan-6-ke-kanan_.jpg",
+      "fosil-kayu-jati_ruangan-6-ke-kanan_6.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/fosil kayu jati.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kanan",
     "slug": "ganesa",
     "name": "Ganesa",
     "photos": [
-      "ganesa-photo.jpg"
+      "ganesa_ruangan-6-ke-kanan_6.jpg"
     ],
     "cards": [
-      "ganesa-card.jpg"
+      "(pengertian)ganesa_ruang-6-ke-kanan_6.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/ganesa.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kanan",
     "slug": "hiasan-garudeya",
     "name": "Hiasan Garudeya",
     "photos": [
-      "hiasan-garudeya-photo.jpg"
+      "hiasan-garudeya_ruangan-6-ke-kanan_6.jpg"
     ],
     "cards": [
-      "hiasan-garudeya-card.jpg"
+      "(pengertian)hiasan-garudeya_ruangan-6-ke-kanan_6.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/hiasan garudeya.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kiri",
     "slug": "moko",
     "name": "Moko",
     "photos": [
-      "moko-photo.jpg"
+      "moko_ruangan-6-ke-kiri_6.jpg"
     ],
     "cards": [
-      "moko-card.jpg"
+      "(pengertian)-moko_ruangan-6-ke-kiri_6.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/moko.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kiri",
     "slug": "benda-terakota-majapahit",
     "name": "Benda Terakota Majapahit",
     "photos": [
-      "benda-terakota-majapahit-photo.jpg",
-      "benda-terakota-majapahit-photo-2.jpg"
+      "benda-terakota-peninggalan-majapahit_ruangan-6-ke-kiri_6(1).jpg",
+      "benda-terakota-peninggalan-majapahit_ruangan-6-ke-kiri_6.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/terakota peninggalan majapahit.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kiri",
     "slug": "patheon-dewa-budha",
     "name": "Patheon Dewa Agama Budha",
     "photos": [
-      "patheon-dewa-budha-photo.jpg",
-      "patheon-dewa-budha-photo-2.jpg"
+      "patheon-dewa-agama-budha_ruangan-6-ke-kiri_6(1).jpg",
+      "patheon-dewa-agama-budha_ruangan-6-ke-kiri_6.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/pantheon dewa agama buddha.m4a"
   },
   {
     "sceneId": "mpu-6-ke-kiri",
     "slug": "sarana-upacara-hindu-budha",
     "name": "Sarana Upacara Hindu-Budha",
     "photos": [
-      "sarana-upacara-hindu-budha-photo.jpg"
+      "sarana-upacara-hindu-budha_ruangan-6-ke-kiri_6.jpg"
     ],
     "cards": [
-      "sarana-upacara-hindu-budha-card.jpg"
+      "(pengertian)sarana-upacara-hindu-budha_ruangan-6-ke-kiri_6.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/sarana upacara dalam agama hindu buddha.m4a"
   },
   {
     "sceneId": "mpu-7",
     "slug": "kerapan-sapi",
     "name": "Kerapan Sapi",
     "photos": [
-      "kerapan-sapi-photo.jpg"
+      "kerapan-sapi-_ruangan-7_7.jpg"
     ],
     "cards": [
-      "kerapan-sapi-card.jpg"
+      "(pengertian)-kerapan-sapi_ruangan-7_7.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/kerapan sapi.m4a"
   },
   {
     "sceneId": "mpu-7",
     "slug": "maket-kapal-insulinde",
     "name": "Maket Kapal Dagang Insulinde",
     "photos": [
-      "maket-kapal-insulinde-photo.jpg"
+      "maket-kapal-dagang-insulinde_ruang-7_7.jpg"
     ],
     "cards": [
-      "maket-kapal-insulinde-card.jpg"
+      "(pengertian)maket-kapal-dagang-insulinde_ruang-7_7.jpg.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/maket kapal dagang insulinde.m4a"
   },
   {
     "sceneId": "mpu-7",
     "slug": "meriam-lela",
     "name": "Meriam Lela",
     "photos": [
-      "meriam-lela-photo.jpg"
+      "meriam-lela_ruangan-7_7.jpg"
     ],
     "cards": [
-      "meriam-lela-card.jpg"
+      "(pengertian)-meriam-lela_ruangan-7_7.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/meriam lela.m4a"
   },
   {
     "sceneId": "mpu-7",
     "slug": "thuk-thuk-kentongan",
     "name": "Thuk-Thuk (Kentongan)",
     "photos": [
-      "thuk-thuk-kentongan-photo.jpg"
+      "Thuk-thuk-(kentongan)_ruangan-7_7.jpg"
     ],
     "cards": [
-      "thuk-thuk-kentongan-card.jpg"
+      "(pengertian)-thuk-thuk-kentongan_ruangan-7_7.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/thuk thuk.m4a"
   },
   {
     "sceneId": "mpu-8-lurus",
     "slug": "batik-pesisiran",
     "name": "Batik Pesisiran Jawa Timur",
     "photos": [
-      "batik-pesisiran-photo.jpg",
-      "batik-pesisiran-photo-2.jpg"
+      "batik-pesisiraj-jawa-timur_ruangan-8-lurus_8.jpg",
+      "batik_ruangan-8-lurus_8.jpg"
     ],
     "cards": [
-      "batik-pesisiran-card.jpg",
-      "batik-pesisiran-card-2.jpg"
+      "(pengertian)batin-pesisiran-jawa-timur_ruangan-8-lurus_8.jpg",
+      "pengertian-batik_ruangan-8-lurus_8.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/batik pesisiran jawa Timur .m4a"
   },
   {
     "sceneId": "mpu-8-lurus",
     "slug": "topeng-malang",
     "name": "Topeng Malang",
     "photos": [
-      "topeng-malang-photo.jpg",
-      "topeng-malang-photo-2.jpg"
+      "topeng-malang_ruangan-8-lurus_8(1).jpg",
+      "topeng-malang_ruangan-8-lurus_8.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/topeng malang.m4a"
   },
   {
     "sceneId": "mpu-8-lurus",
     "slug": "wayang-beber",
     "name": "Wayang Beber",
     "photos": [
-      "wayang-beber-photo.jpg"
+      "wayang-beber_ruangan-8-lurus8.jpg",
+      "wayang_ruangan-12-naik-ke-atas_12.heif"
     ],
     "cards": [
-      "wayang-beber-card.jpg"
+      "(pengertian)wayang-beber_ruangan-8-lurus_8.jpg",
+      "pengertian-wayang_ruangan-12-naik-tangga_12.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/wayang beber.m4a"
   },
   {
     "sceneId": "mpu-9",
@@ -322,7 +325,7 @@
     "name": "Prasasti Kamalgyan",
     "photos": [],
     "cards": [
-      "prasasti-kamalgyan-card.jpg"
+      "penjelasan-prasasti-kamalgyan_ruang-9_9.jpg"
     ],
     "description": "",
     "voiceover": ""
@@ -332,107 +335,102 @@
     "slug": "kipas-angin-uap",
     "name": "Kipas Angin Tenaga Uap",
     "photos": [
-      "kipas-angin-uap-photo.jpg"
+      "kipas-angin-tenaga-uap_ruangan-9-lurus-naik-tangga_9.jpg"
     ],
     "cards": [
-      "kipas-angin-uap-card.jpg"
+      "(pengertian)kipas-angin-tenaga-uap_ruangan-9-lurus-naik-tangga_9.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/kipas angin tenaga uap.m4a"
   },
   {
     "sceneId": "mpu-9-lurus-naik-tangga",
     "slug": "mesin-ketik-9",
     "name": "Mesin Ketik (Lantai Atas)",
     "photos": [
-      "mesin-ketik-9-photo.jpg"
+      "mesin-ketik_ruang-9-lurus-naik-ke-atas_9.jpg",
+      "mesin-ketik_ruangan-10-lurus_10.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/mesin ketik.m4a"
   },
   {
     "sceneId": "mpu-9-lurus-naik-tangga",
     "slug": "sepeda-motor-daimler",
     "name": "Sepeda Motor Daimler",
     "photos": [
-      "sepeda-motor-daimler-photo.jpg"
+      "sepeda-motor-daimler_ruangan-9-naik-tangga-lurus_9.jpg"
     ],
     "cards": [
-      "sepeda-motor-daimler-card.jpg"
+      "(pengertian)-sepeda-motor-daimler_ruangan-9-lurus-naik-tangga_9.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/sepeda motor daimler.m4a"
   },
   {
     "sceneId": "mpu-10-lurus",
     "slug": "kapal-maru",
     "name": "Kapal Maru",
     "photos": [
-      "kapal-maru-photo.jpg"
+      "kapal-maru_ruangan-10-lurus_10.jpg"
     ],
     "cards": [
-      "kapal-maru-card.jpg"
+      "pengertian-kapal-maru_ruangan-10-lurus_10.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/kapal maru.m4a"
   },
   {
     "sceneId": "mpu-10-lurus",
     "slug": "mesin-ketik-10",
     "name": "Mesin Ketik",
-    "photos": [
-      "mesin-ketik-10-photo.jpg"
-    ],
+    "photos": [],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/mesin ketik.m4a"
   },
   {
     "sceneId": "mpu-10-lurus",
     "slug": "sepeda-tinggi",
     "name": "Sepeda Tinggi",
     "photos": [
-      "sepeda-tinggi-photo.jpg"
+      "sepeda-tinggi_ruangan-10-lurus_10.jpg"
     ],
     "cards": [
-      "sepeda-tinggi-card.jpg"
+      "(pengertian)sepeda-tinggi_ruangan-10-lurus_10.jpg"
     ],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/sepeda tinggi.m4a"
   },
   {
     "sceneId": "mpu-11-lurus",
     "slug": "maket-torpedo-lynx",
     "name": "Maket Kapal Pemburu Torpedo Lynx",
     "photos": [
-      "maket-torpedo-lynx-photo.jpg",
-      "maket-torpedo-lynx-photo-2.jpg"
+      "market-kapal-pemburu-torpedo-lynx_ruangan-11-lurus_11.jpg",
+      "market-kapal-torpedo-lynx_ruangan-11-lurus_11.jpg"
     ],
     "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/maket kapal pemburu torpedo lynx.m4a"
   },
   {
     "sceneId": "mpu-12-naik-tangga",
     "slug": "wayang",
     "name": "Wayang",
     "photos": [
-      "wayang-photo.jpg"
+      "wayang-kulit-bangkalan_ruangan-12-naik-tangga_12.jpg"
     ],
-    "cards": [
-      "wayang-card.jpg"
-    ],
+    "cards": [],
     "description": "",
-    "voiceover": ""
+    "voiceover": "/audio/voiceovers/wayang.m4a"
   },
   {
     "sceneId": "mpu-12-naik-tangga",
     "slug": "wayang-kulit-bangkalan",
     "name": "Wayang Kulit Bangkalan",
-    "photos": [
-      "wayang-kulit-bangkalan-photo.jpg"
-    ],
+    "photos": [],
     "cards": [],
     "description": "",
     "voiceover": ""
@@ -442,7 +440,62 @@
     "slug": "jaran-kepang",
     "name": "Jaran Kepang",
     "photos": [
-      "jaran-kepang-photo.jpg"
+      "jaran-kecak_ruangan-13_13.jpg"
+    ],
+    "cards": [],
+    "description": "",
+    "voiceover": "/audio/voiceovers/jaran kecak.m4a"
+  },
+  {
+    "sceneId": "mpu-13",
+    "slug": "reog",
+    "name": "Reog",
+    "photos": [
+      "reog_ruang-13_13.jpg"
+    ],
+    "cards": [],
+    "description": "",
+    "voiceover": "/audio/voiceovers/reog.m4a"
+  },
+  {
+    "sceneId": "mpu-5",
+    "slug": "koleksi-fosil",
+    "name": "Koleksi Fosil",
+    "photos": [
+      "koleksi-fosil_ruangan-5_5.jpg"
+    ],
+    "cards": [],
+    "description": "",
+    "voiceover": ""
+  },
+  {
+    "sceneId": "mpu-6-ke-kiri",
+    "slug": "koleksi-yang-di-pamerkan",
+    "name": "Koleksi Pameran",
+    "photos": [
+      "koleksi-yang-di-pamerkan-_ruangan-6-ke-kiri_6.jpg"
+    ],
+    "cards": [],
+    "description": "",
+    "voiceover": ""
+  },
+  {
+    "sceneId": "mpu-6-ke-kiri",
+    "slug": "zona-hindu-budha",
+    "name": "Zona Hindu Budha",
+    "photos": [
+      "zona-hindu-budha_ruangan-6-ke-kiri_6.jpg"
+    ],
+    "cards": [],
+    "description": "",
+    "voiceover": ""
+  },
+  {
+    "sceneId": "mpu-9-lurus-naik-tangga",
+    "slug": "zona-ilmu-pengetahuan-dan-telknologi",
+    "name": "Zona IPTEK",
+    "photos": [
+      "zona-ilmu-pengetahuan-dan-telknologi_ruangan-9-lurus-naik-tangga_9.jpg"
     ],
     "cards": [],
     "description": "",
@@ -450,10 +503,10 @@
   },
   {
     "sceneId": "mpu-13",
-    "slug": "reog",
-    "name": "Reog",
+    "slug": "ruang-kesenian",
+    "name": "Ruang Kesenian",
     "photos": [
-      "reog-photo.jpg"
+      "ruang-kesenian_ruang-13_13.jpg"
     ],
     "cards": [],
     "description": "",

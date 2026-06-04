@@ -332,7 +332,7 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
           {musicEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           <span className="viewer-music-label">{musicEnabled ? 'Musik Aktif' : 'Musik Nonaktif'}</span>
         </button>
-      </div>
+              </div>
       {/* panorama-stage: tabIndex=0 agar bisa difokus keyboard; aria-label menjelaskan kontrol */}
       <div
         ref={stageRef}
@@ -344,6 +344,8 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
         <p className="sr-only">
           Gunakan tombol panah untuk memutar pandangan, tombol + atau - untuk memperbesar atau memperkecil, dan tombol Home untuk kembali ke posisi awal.
         </p>
+
+        
         {hotspots.length > 0 && onSelect ? (
           <div className="tour-hotspots" aria-label="Navigasi titik panorama">
             {hotspots.map((hotspot) => {
