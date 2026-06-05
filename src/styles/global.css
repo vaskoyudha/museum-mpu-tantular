@@ -2364,26 +2364,10 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
 html[data-text-size="lg"] { font-size: 112.5%; }
 html[data-text-size="xl"] { font-size: 125%; }
 
-/* High contrast theme — black paper, white ink, shadows off.
-   White-on-black = 21:1 contrast, well above WCAG AA (4.5:1). */
-html[data-contrast="high"] {
-  --paper: #000;
-  --ink: #FFF;
-  --ink-soft: #FFF;
-  --shadow-thick: none;
-  --shadow-mid: none;
-  --shadow-thin: none;
-}
-
 /* Global keyboard focus ring */
 :focus-visible {
   outline: 3px solid var(--saffron);
   outline-offset: 2px;
-}
-
-/* High contrast override — white outline on black */
-html[data-contrast="high"] :focus-visible {
-  outline-color: #FFF;
 }
 
 /* Skip-to-content link — hidden until focused */
@@ -2466,11 +2450,6 @@ html[data-contrast="high"] :focus-visible {
   transform: translate(2px, 2px);
   box-shadow: var(--shadow-mid);
 }
-html[data-contrast="high"] .a11y-widget-button {
-  border-color: #FFF;
-  background: #000;
-  color: #FFF;
-}
 
 .a11y-widget-popover {
   position: absolute;
@@ -2546,6 +2525,21 @@ html[data-contrast="high"] .a11y-widget-button {
 }
 .a11y-toggle-btn:hover { background: var(--paper); }
 .a11y-toggle-btn.active:hover { background: var(--indigo); border-color: var(--indigo); }
+
+.a11y-row-tunanetra {
+  margin-bottom: .4rem;
+  padding-bottom: .6rem;
+  border-bottom: 1.5px dashed var(--ink-soft);
+}
+
+.tunanetra-btn.active {
+  background: var(--jade);
+  border-color: var(--jade);
+}
+.tunanetra-btn.active:hover {
+  background: color-mix(in srgb, var(--jade) 85%, black);
+  border-color: color-mix(in srgb, var(--jade) 85%, black);
+}
 
 .a11y-reset-btn {
   width: 100%;
@@ -2630,6 +2624,43 @@ html[data-contrast="high"] .a11y-widget-button {
   color: var(--ink-soft);
   margin: 0 0 .9rem;
   font-style: italic;
+}
+
+/* ============================================================
+   Text to Speech button (Scene Description)
+   ============================================================ */
+.scene-tts-wrapper {
+  margin-top: .9rem;
+}
+
+.tts-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .4rem .9rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  font-weight: 700;
+  font-size: .82rem;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background .15s ease, transform .12s ease;
+  box-shadow: var(--shadow-thin);
+}
+.tts-btn.playing {
+  background: var(--jade);
+  color: var(--cream);
+  border-color: var(--jade);
+}
+.tts-btn:hover {
+  transform: translate(1px, 1px);
+  background: var(--paper);
+  box-shadow: none;
+}
+.tts-btn.playing:hover {
+  background: color-mix(in srgb, var(--jade) 85%, black);
+  border-color: color-mix(in srgb, var(--jade) 85%, black);
 }
 
 /* ============================================================
@@ -2774,12 +2805,6 @@ html[data-contrast="high"] .a11y-widget-button {
   font-style: italic;
 }
 
-/* High-contrast overrides for catalog */
-html[data-contrast="high"] .catalog-scene-summary:hover,
-html[data-contrast="high"] .catalog-scene[open] .catalog-scene-summary {
-  background: #333;
-}
-html[data-contrast="high"] .catalog-artifact-button:hover { background: #222; }
 
 /* ============================================================
    Route Editor Panel & Preview (Coordinate Adjuster Tool)

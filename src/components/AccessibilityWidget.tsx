@@ -1,6 +1,6 @@
 // Widget aksesibilitas mengambang — tombol bawah-kanan membuka popover kecil
-// berisi kontrol: kontras, ukuran teks, musik latar, dan reset.
-import { Settings2, X } from 'lucide-react';
+// berisi kontrol: mode tunanetra, ukuran teks, musik latar, dan reset.
+import { Eye, Settings2, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useA11yPrefs } from '../hooks/useA11yPrefs';
 import { useLiveAnnouncer } from './LiveAnnouncer';
@@ -9,7 +9,7 @@ export default function AccessibilityWidget() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
-  const { contrast, textSize, musicEnabled, setContrast, setTextSize, setMusicEnabled, reset } = useA11yPrefs();
+  const { textSize, musicEnabled, screenReaderMode, setTextSize, setMusicEnabled, setScreenReaderMode, reset } = useA11yPrefs();
   const { announce } = useLiveAnnouncer();
 
   // Tutup popover saat Escape ditekan
@@ -43,11 +43,11 @@ export default function AccessibilityWidget() {
     return () => window.removeEventListener('pointerdown', onPointer);
   }, [open]);
 
-  const toggleContrast = useCallback(() => {
-    const next = contrast === 'default' ? 'high' : 'default';
-    setContrast(next);
-    announce(next === 'high' ? 'Kontras tinggi aktif' : 'Kontras tinggi nonaktif');
-  }, [contrast, setContrast, announce]);
+  const toggleScreenReaderMode = useCallback(() => {
+    const next = !screenReaderMode;
+    setScreenReaderMode(next);
+    announce(next ? 'Mode tunanetra aktif — teks diperbesar' : 'Mode tunanetra nonaktif');
+  }, [screenReaderMode, setScreenReaderMode, announce]);
 
   const cycleTextSize = useCallback(() => {
     const sizes = ['default', 'lg', 'xl'] as const;
@@ -107,17 +107,17 @@ export default function AccessibilityWidget() {
           </div>
 
           <div className="a11y-widget-controls">
-            {/* Kontras */}
-            <div className="a11y-widget-row">
-              <span className="a11y-widget-label">Kontras</span>
+            {/* Mode Tunanetra — quick toggle */}
+            <div className="a11y-widget-row a11y-row-tunanetra">
+              <span className="a11y-widget-label"><Eye size={14} aria-hidden="true" /> Tunanetra</span>
               <button
                 type="button"
-                className={`a11y-toggle-btn ${contrast === 'high' ? 'active' : ''}`}
-                onClick={toggleContrast}
-                aria-pressed={contrast === 'high'}
-                aria-label={contrast === 'high' ? 'Nonaktifkan kontras tinggi' : 'Aktifkan kontras tinggi'}
+                className={`a11y-toggle-btn tunanetra-btn ${screenReaderMode ? 'active' : ''}`}
+                onClick={toggleScreenReaderMode}
+                aria-pressed={screenReaderMode}
+                aria-label={screenReaderMode ? 'Nonaktifkan mode tunanetra' : 'Aktifkan mode tunanetra — teks diperbesar'}
               >
-                {contrast === 'high' ? 'Aktif' : 'Nonaktif'}
+                {screenReaderMode ? 'Aktif' : 'Nonaktif'}
               </button>
             </div>
 
@@ -162,3 +162,4 @@ export default function AccessibilityWidget() {
     </div>
   );
 }
+

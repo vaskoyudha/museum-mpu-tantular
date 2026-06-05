@@ -47,6 +47,14 @@ for (const item of catalog as RawArtifact[]) {
   grouped.set(item.sceneId, list);
 }
 
+const encodeVoiceoverUrl = (url: string) => {
+  if (!url) return '';
+  const parts = url.split('/');
+  const filename = parts.pop() || '';
+  // Encode the filename to handle spaces and special characters safely
+  return [...parts, encodeURIComponent(filename)].join('/');
+};
+
 export const artifacts: Artifact[] = (catalog as RawArtifact[]).map((item) => {
   const sceneList = grouped.get(item.sceneId) ?? [];
   const idx = sceneList.findIndex((entry) => entry.slug === item.slug);
@@ -61,7 +69,7 @@ export const artifacts: Artifact[] = (catalog as RawArtifact[]).map((item) => {
     y: yPattern(idx),
     angle: anglePattern(idx, total),
     description: item.description ?? '',
-    voiceover: item.voiceover ?? '',
+    voiceover: encodeVoiceoverUrl(item.voiceover ?? ''),
   };
 });
 

@@ -27,6 +27,8 @@ import LiveAnnouncer, { useLiveAnnouncer } from './components/LiveAnnouncer';
 import AccessibilityWidget from './components/AccessibilityWidget';
 import CatalogSection from './components/CatalogSection';
 import ArtifactVoiceover from './components/ArtifactVoiceover';
+import TextToSpeechButton from './components/TextToSpeechButton';
+import { useA11yPrefs } from './hooks/useA11yPrefs';
 
 type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog';
 
@@ -65,6 +67,7 @@ function App() {
       return new Set();
     }
   });
+  const { screenReaderMode } = useA11yPrefs();
   const primaryMuseum = useMemo(() => museums.slice(0, 4), []);
 
   useEffect(() => {
@@ -86,8 +89,8 @@ function App() {
 
   const handleSelectMuseum = useCallback((m: Museum) => {
     setActiveMuseum(m);
-    announce("Berpindah ke " + m.highlight);
-  }, [announce]);
+    announce(screenReaderMode ? `Berpindah ke ${m.highlight}. ${m.description}` : `Berpindah ke ${m.highlight}`);
+  }, [announce, screenReaderMode]);
 
   const handleNavigate = useCallback((page: AppPage) => {
     setActivePage(page);
@@ -500,6 +503,9 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
             <p className="eyebrow small">Titik Saat Ini</p>
             <h3>{activeMuseum.highlight}</h3>
             <p className="scene-meta"><MapPin size={14} /> {activeMuseum.city}, {activeMuseum.province}</p>
+            <div className="scene-tts-wrapper">
+              <TextToSpeechButton text={`${activeMuseum.highlight}. ${activeMuseum.description}`} />
+            </div>
           </div>
         </div>
 
