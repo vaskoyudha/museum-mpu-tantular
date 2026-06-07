@@ -23,12 +23,14 @@ import { audienceBenefits, galleryItems, museumProfile, museums, type Museum } f
 import { artifactsByScene, totalArtifacts, type Artifact } from './data/artifacts';
 import { TourViewer } from './components/TourViewer';
 import SkipLink from './components/SkipLink';
-import LiveAnnouncer, { useLiveAnnouncer } from './components/LiveAnnouncer';
+import LiveAnnouncer from './components/LiveAnnouncer';
+import { useLiveAnnouncer } from './hooks/useLiveAnnouncer';
 import AccessibilityWidget from './components/AccessibilityWidget';
 import CatalogSection from './components/CatalogSection';
 import ArtifactVoiceover from './components/ArtifactVoiceover';
 import TextToSpeechButton from './components/TextToSpeechButton';
 import { useA11yPrefs } from './hooks/useA11yPrefs';
+import BackgroundMusic from './components/BackgroundMusic';
 
 type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog';
 
@@ -258,9 +260,12 @@ function Header({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (
           </button>
         ))}
       </nav>
-      <button className="icon-button" type="button" aria-label="Buka menu">
-        <Menu size={22} />
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <BackgroundMusic />
+        <button className="icon-button" type="button" aria-label="Buka menu">
+          <Menu size={22} />
+        </button>
+      </div>
     </header>
   );
 }

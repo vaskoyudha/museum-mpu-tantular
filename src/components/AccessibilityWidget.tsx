@@ -3,7 +3,7 @@
 import { Eye, Settings2, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useA11yPrefs } from '../hooks/useA11yPrefs';
-import { useLiveAnnouncer } from './LiveAnnouncer';
+import { useLiveAnnouncer } from '../hooks/useLiveAnnouncer';
 
 export default function AccessibilityWidget() {
   const [open, setOpen] = useState(false);

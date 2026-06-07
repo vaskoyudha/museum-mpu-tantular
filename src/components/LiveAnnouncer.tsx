@@ -1,15 +1,20 @@
-import { useCallback, useRef } from 'react';
-
-export function useLiveAnnouncer() {
-  const regionRef = useRef<HTMLDivElement | null>(null);
-  const announce = useCallback((text: string) => {
-    if (regionRef.current) regionRef.current.textContent = text;
-  }, []);
-  return { announce, regionRef };
-}
+import { useEffect, useRef } from 'react';
+import { setAnnouncerListener } from '../hooks/useLiveAnnouncer';
 
 export default function LiveAnnouncer() {
-  const { regionRef } = useLiveAnnouncer();
+  const regionRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setAnnouncerListener((text: string) => {
+      if (regionRef.current) {
+        regionRef.current.textContent = text;
+      }
+    });
+    return () => {
+      setAnnouncerListener(null);
+    };
+  }, []);
+
   return (
     <div
       ref={regionRef}
