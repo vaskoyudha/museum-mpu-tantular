@@ -1,38 +1,67 @@
 import { Volume2, VolumeX } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useA11yPrefs } from '../hooks/useA11yPrefs';
+
+const MUSIC_SRC = '/audio/background-music.mp3';
 
 export default function BackgroundMusic() {
   const { musicEnabled, setMusicEnabled } = useA11yPrefs();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
+  // Browsers block audio autoplay without a user gesture.
+  // Listen for the first interaction (click / key / touch) and set a flag
+  // so the play/pause effect below can start audio on that gesture.
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.5;
-      if (musicEnabled) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            // Autoplay blocked by browser
-          });
-        }
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [musicEnabled]);
+    if (hasInteracted) return;
 
-  const togglePlay = () => {
+    const onFirstInteraction = () => {
+      setHasInteracted(true);
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('keydown', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+    };
+
+    document.addEventListener('click', onFirstInteraction);
+    document.addEventListener('keydown', onFirstInteraction);
+    document.addEventListener('touchstart', onFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', onFirstInteraction);
+      document.removeEventListener('keydown', onFirstInteraction);
+      document.removeEventListener('touchstart', onFirstInteraction);
+    };
+  }, [hasInteracted]);
+
+  // Play / pause based on musicEnabled — only after first user interaction.
+  // Before interaction, the <audio preload="auto"> element starts buffering
+  // the file in the background so playback is instant once the user engages.
+  useEffect(() => {
+    if (!hasInteracted || !audioRef.current) return;
+
+    audioRef.current.volume = 0.5;
+
+    if (musicEnabled) {
+      void audioRef.current.play().catch((err) => {
+        console.warn('Background music play failed:', err);
+      });
+    } else {
+      audioRef.current.pause();
+    }
+  }, [musicEnabled, hasInteracted]);
+
+  const togglePlay = useCallback(() => {
     setMusicEnabled(!musicEnabled);
-  };
+  }, [musicEnabled, setMusicEnabled]);
 
   return (
     <>
       <audio
         ref={audioRef}
-        src="/audio/background-music.mp3"
+        src={MUSIC_SRC}
         loop
         preload="auto"
+        playsInline
       />
       <button
         className="icon-button"
@@ -46,4 +75,3 @@ export default function BackgroundMusic() {
     </>
   );
 }
-

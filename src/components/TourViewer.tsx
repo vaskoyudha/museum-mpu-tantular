@@ -27,7 +27,7 @@ type ResolvedHotspot = {
   target: Museum;
 };
 
-const MUSIC_SRC = '/audio/ambient/gamelan.mp3';
+const MUSIC_SRC = '/audio/background-music.mp3';
 const DEG_STEP = 10 * (Math.PI / 180); // 10° dalam radian (PSV pakai radian)
 const PITCH_MAX = 85 * (Math.PI / 180);
 
