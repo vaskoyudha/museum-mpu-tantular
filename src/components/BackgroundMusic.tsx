@@ -1,60 +1,49 @@
 import { Volume2, VolumeX } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useA11yPrefs } from '../hooks/useA11yPrefs';
 
 export default function BackgroundMusic() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { musicEnabled, setMusicEnabled } = useA11yPrefs();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.5;
-      
-      // Auto-play attempt
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          setIsPlaying(true);
-        }).catch(() => {
-          // Autoplay blocked by browser
-          setIsPlaying(false);
-        });
-      }
-    }
-  }, []);
-
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
+      if (musicEnabled) {
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
-          playPromise.then(() => {
-            setIsPlaying(true);
-          }).catch(() => {});
+          playPromise.catch(() => {
+            // Autoplay blocked by browser
+          });
         }
+      } else {
+        audioRef.current.pause();
       }
     }
+  }, [musicEnabled]);
+
+  const togglePlay = () => {
+    setMusicEnabled(!musicEnabled);
   };
 
   return (
     <>
       <audio
         ref={audioRef}
-        src="/audio/background-music.m4a"
+        src="/audio/background-music.mp3"
         loop
         preload="auto"
       />
       <button
         className="icon-button"
         type="button"
-        aria-label={isPlaying ? "Matikan musik latar" : "Putar musik latar"}
+        aria-label={musicEnabled ? "Matikan musik latar" : "Putar musik latar"}
         onClick={togglePlay}
-        title={isPlaying ? "Matikan musik latar" : "Putar musik latar"}
+        title={musicEnabled ? "Matikan musik latar" : "Putar musik latar"}
       >
-        {isPlaying ? <Volume2 size={22} /> : <VolumeX size={22} />}
+        {musicEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
       </button>
     </>
   );
 }
+
