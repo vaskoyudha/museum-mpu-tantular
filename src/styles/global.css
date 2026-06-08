@@ -2364,6 +2364,126 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
 html[data-text-size="lg"] { font-size: 112.5%; }
 html[data-text-size="xl"] { font-size: 125%; }
 
+/* ============================================================
+   Screen reader mode — high contrast, simplified layout
+   Activated via html[data-screen-reader-mode="true"]
+   ============================================================ */
+html[data-screen-reader-mode="true"] {
+  /* High contrast colors */
+  --paper: #FFFFFF;
+  --paper-2: #F5F5F5;
+  --ink: #000000;
+  --ink-soft: #1A1A1A;
+  --terracotta: #B91C1C;
+  --saffron: #D97706;
+  --indigo: #1E3A8A;
+  --jade: #047857;
+
+  /* Thicker borders for visibility */
+  --border-ink: 3px solid var(--ink);
+  --shadow-thick: 6px 6px 0 var(--ink);
+  --shadow-mid: 3px 3px 0 var(--ink);
+  --shadow-thin: 2px 2px 0 var(--ink);
+
+  /* Increase base font size */
+  font-size: 118%;
+  line-height: 1.7;
+}
+
+/* High contrast focus ring */
+html[data-screen-reader-mode="true"] :focus-visible {
+  outline: 4px solid var(--terracotta);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(209, 75, 44, 0.3);
+}
+
+/* Larger hit targets for buttons and links */
+html[data-screen-reader-mode="true"] button,
+html[data-screen-reader-mode="true"] a,
+html[data-screen-reader-mode="true"] [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+html[data-screen-reader-mode="true"] .nav-links a {
+  padding: 0.5rem 0.75rem;
+}
+
+html[data-screen-reader-mode="true"] .icon-button {
+  width: 48px;
+  height: 48px;
+}
+
+/* Simplified layout — hide decorative elements */
+html[data-screen-reader-mode="true"] .site-shell {
+  background-image: none;
+  background-color: var(--paper);
+}
+
+html[data-screen-reader-mode="true"] .hero-accent,
+html[data-screen-reader-mode="true"] .hero-decorative,
+html[data-screen-reader-mode="true"] .brand-symbol,
+html[data-screen-reader-mode="true"] [aria-hidden="true"] img:not([alt]),
+html[data-screen-reader-mode="true"] .polaroid-frame::before,
+html[data-screen-reader-mode="true"] .polaroid-frame::after {
+  display: none !important;
+}
+
+/* Stronger text contrast */
+html[data-screen-reader-mode="true"] p,
+html[data-screen-reader-mode="true"] span,
+html[data-screen-reader-mode="true"] li {
+  color: var(--ink);
+}
+
+html[data-screen-reader-mode="true"] .eyebrow,
+html[data-screen-reader-mode="true"] .micro-label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Simplify card shadows — use solid borders instead */
+html[data-screen-reader-mode="true"] .card,
+html[data-screen-reader-mode="true"] .museum-card,
+html[data-screen-reader-mode="true"] .gallery-card {
+  box-shadow: none;
+  border: 3px solid var(--ink);
+}
+
+/* Ensure sufficient spacing between interactive elements */
+html[data-screen-reader-mode="true"] .nav-links {
+  gap: 1.5rem;
+}
+
+html[data-screen-reader-mode="true"] .mobile-tabbar {
+  height: 64px;
+}
+
+html[data-screen-reader-mode="true"] .mobile-tab-icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* Remove animations that may distract */
+html[data-screen-reader-mode="true"] *,
+html[data-screen-reader-mode="true"] *::before,
+html[data-screen-reader-mode="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Ensure text is selectable */
+html[data-screen-reader-mode="true"] p,
+html[data-screen-reader-mode="true"] h1,
+html[data-screen-reader-mode="true"] h2,
+html[data-screen-reader-mode="true"] h3,
+html[data-screen-reader-mode="true"] h4,
+html[data-screen-reader-mode="true"] li {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 /* Global keyboard focus ring */
 :focus-visible {
   outline: 3px solid var(--saffron);
@@ -2971,6 +3091,129 @@ html[data-text-size="xl"] { font-size: 125%; }
   100% {
     transform: translate(calc(var(--hotspot-left, -9999px) - 50%), calc(var(--hotspot-top, -9999px) - 50%)) scale(1);
     box-shadow: 0 0 0 0 rgba(229, 169, 59, 0);
+  }
+}
+
+/* ============================================================
+   Welcome modal
+   ============================================================ */
+.welcome-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(20, 18, 14, .82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  animation: welcome-fade-in .3s ease;
+}
+@keyframes welcome-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.welcome-modal {
+  width: min(480px, 100%);
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: 8px 8px 0 var(--ink);
+  overflow: hidden;
+  animation: welcome-pop-in .35s cubic-bezier(.34, 1.56, .64, 1);
+}
+@keyframes welcome-pop-in {
+  from { transform: translateY(24px) scale(.94); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.welcome-modal-content {
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+}
+.welcome-modal-icon {
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  background: var(--saffron);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: var(--shadow-thin);
+  margin-bottom: .5rem;
+  animation: welcome-bounce 1s ease-in-out infinite alternate;
+}
+@keyframes welcome-bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+.welcome-modal-title {
+  font-family: "Fraunces", serif;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin: 0;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.welcome-modal-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 36ch;
+  margin: 0;
+}
+.welcome-modal-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .8rem;
+  color: var(--ink-soft);
+  background: var(--paper-2);
+  padding: .35rem .75rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px dashed var(--ink-soft);
+  margin: .25rem 0 .75rem;
+}
+.welcome-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  max-width: 280px;
+  padding: .9rem 1.5rem;
+  background: var(--terracotta);
+  color: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  box-shadow: var(--shadow-mid);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.welcome-modal-btn:hover {
+  background: color-mix(in srgb, var(--terracotta) 88%, black);
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.welcome-modal-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.welcome-modal-btn:focus-visible {
+  outline: 3px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+/* Mobile welcome modal */
+@media (max-width: 640px) {
+  .welcome-modal-content {
+    padding: 2rem 1.5rem 1.75rem;
+  }
+  .welcome-modal-title {
+    font-size: 1.6rem;
   }
 }
 

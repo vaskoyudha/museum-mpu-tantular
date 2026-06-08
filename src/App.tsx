@@ -31,6 +31,7 @@ import ArtifactVoiceover from './components/ArtifactVoiceover';
 import TextToSpeechButton from './components/TextToSpeechButton';
 import { useA11yPrefs } from './hooks/useA11yPrefs';
 import BackgroundMusic from './components/BackgroundMusic';
+import WelcomeModal from './components/WelcomeModal';
 
 type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog';
 
@@ -119,10 +120,15 @@ function App() {
     announce("Menutup detail");
   }, [announce]);
 
+  const handleWelcomeEnter = useCallback(() => {
+    document.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }, []);
+
   return (
     <main id="main" className="site-shell">
       <SkipLink />
       <LiveAnnouncer />
+      <WelcomeModal onEnter={handleWelcomeEnter} />
       <Header activePage={activePage} onNavigate={handleNavigate} />
 
       {/* ── Beranda (Home) — semua section berurutan ── */}
