@@ -4,7 +4,7 @@ export function useTextToSpeech() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Selalu didukung jika menggunakan audio berbasis URL
+  // Selalu didukung — menggunakan proxy TTS lokal berbasis audio HTML5
   const isSupported = true;
 
   useEffect(() => {
@@ -19,38 +19,30 @@ export function useTextToSpeech() {
   const speak = useCallback(async (text: string) => {
     if (!text) return;
 
-    // Batalkan pemutaran sebelumnya
+    // Hentikan audio sebelumnya
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
     }
 
-    // Memecah teks jika terlalu panjang (Google TTS limit ~200 karakter)
-    // Walaupun data kita rata-rata <200, ini mencegah API error.
-    let playText = text;
-    if (playText.length > 200) {
-      playText = playText.substring(0, 197) + '...';
-    }
+    // Batasi panjang teks (Google TTS limit ~200 karakter per request)
+    const playText = text.length > 200 ? text.substring(0, 197) + '...' : text;
 
-    // Menggunakan API TTS Google Translate untuk kompatibilitas stabil di semua OS
-    // (Linux / Chrome sering gagal membunyikan window.speechSynthesis secara native)
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=id&client=tw-ob&q=${encodeURIComponent(playText)}`;
-    
-    const audio = new Audio(url);
+    // Gunakan proxy lokal /api/tts untuk menghindari CORS
+    // (proxy di vite.config.ts mem-forward ke Google Translate TTS dengan User-Agent yang benar)
+    const proxyUrl = `/api/tts?q=${encodeURIComponent(playText)}`;
+
+    const audio = new Audio(proxyUrl);
     audioRef.current = audio;
 
-    audio.onplay = () => setIsPlaying(true);
-    audio.onended = () => setIsPlaying(false);
-    audio.onerror = (e) => {
-      console.error('TTS audio error:', e);
-      setIsPlaying(false);
-    };
+    audio.onplay   = () => setIsPlaying(true);
+    audio.onended  = () => setIsPlaying(false);
+    audio.onerror  = () => setIsPlaying(false);
 
     try {
-      setIsPlaying(true); // Fallback visual segera
+      setIsPlaying(true);
       await audio.play();
-    } catch (e) {
-      console.error('Failed to play TTS audio:', e);
+    } catch {
       setIsPlaying(false);
     }
   }, []);
@@ -74,12 +66,5 @@ export function useTextToSpeech() {
     [isPlaying, speak, stop],
   );
 
-  return {
-    isPlaying,
-    isSupported,
-    speak,
-    stop,
-    toggle,
-  };
+  return { isPlaying, isSupported, speak, stop, toggle };
 }
-
