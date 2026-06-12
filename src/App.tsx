@@ -58,6 +58,7 @@ function App() {
   const [activePage, setActivePage] = useState<AppPage>('home');
   const [activeMuseum, setActiveMuseum] = useState<Museum>(museums[0]);
   const [activeArtifact, setActiveArtifact] = useState<Artifact | null>(null);
+  const [isVoiceoverPlaying, setIsVoiceoverPlaying] = useState(false);
   const [visitedArtifacts, setVisitedArtifacts] = useState<Set<string>>(() => {
     if (typeof window === 'undefined') return new Set();
     try {
@@ -93,6 +94,12 @@ function App() {
   const handleSelectMuseum = useCallback((m: Museum) => {
     setActiveMuseum(m);
     announce(screenReaderMode ? `Berpindah ke ${m.highlight}. ${m.description}` : `Berpindah ke ${m.highlight}`);
+    setTimeout(() => {
+      const viewer = document.getElementById('tour-tour');
+      if (viewer) {
+        viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }, [announce, screenReaderMode]);
 
   const handleNavigate = useCallback((page: AppPage) => {
@@ -142,6 +149,7 @@ function App() {
             onSelect={handleSelectMuseum}
             visitedArtifacts={visitedArtifacts}
             onArtifactSelect={handleArtifactSelect}
+            isVoiceoverPlaying={isVoiceoverPlaying}
           />
           <CatalogSection
             museums={museums}
@@ -171,6 +179,7 @@ function App() {
             onSelect={handleSelectMuseum}
             visitedArtifacts={visitedArtifacts}
             onArtifactSelect={handleArtifactSelect}
+            isVoiceoverPlaying={isVoiceoverPlaying}
           />
         </div>
       )}
@@ -210,6 +219,8 @@ function App() {
           artifact={activeArtifact}
           visited={visitedArtifacts.has(activeArtifact.id)}
           onClose={handleArtifactClose}
+          onVoiceoverPlay={() => setIsVoiceoverPlaying(true)}
+          onVoiceoverPause={() => setIsVoiceoverPlaying(false)}
         />
       ) : null}
     </main>
@@ -400,7 +411,7 @@ function FeaturedMuseum({ museums: featured, activeId, onSelect }: { museums: Mu
   );
 }
 
-function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts, onArtifactSelect }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void; visitedArtifacts: Set<string>; onArtifactSelect: (artifact: Artifact) => void }) {
+function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts, onArtifactSelect, isVoiceoverPlaying }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void; visitedArtifacts: Set<string>; onArtifactSelect: (artifact: Artifact) => void; isVoiceoverPlaying: boolean }) {
   const activeIndex = scenes.findIndex((s) => s.id === activeMuseum.id);
   const total = scenes.length;
   const prevScene = activeIndex > 0 ? scenes[activeIndex - 1] : null;
@@ -480,6 +491,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
         artifacts={sceneArtifacts}
         visitedArtifacts={visitedArtifacts}
         onArtifactSelect={onArtifactSelect}
+        isVoiceoverPlaying={isVoiceoverPlaying}
       />
 
       <aside className="current-scene">
@@ -676,7 +688,7 @@ function InfoTile({ icon: Icon, title, text }: { icon: typeof Clock3; title: str
   );
 }
 
-function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; visited: boolean; onClose: () => void }) {
+function ArtifactModal({ artifact, visited, onClose, onVoiceoverPlay, onVoiceoverPause }: { artifact: Artifact; visited: boolean; onClose: () => void; onVoiceoverPlay?: () => void; onVoiceoverPause?: () => void }) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -793,7 +805,12 @@ function ArtifactModal({ artifact, visited, onClose }: { artifact: Artifact; vis
         </header>
         <div className="artifact-modal-body">
           {/* Voiceover (Tugas 10) */}
-          <ArtifactVoiceover src={artifact.voiceover || undefined} title={artifact.name} />
+          <ArtifactVoiceover
+            src={artifact.voiceover || undefined}
+            title={artifact.name}
+            onPlay={onVoiceoverPlay}
+            onPause={onVoiceoverPause}
+          />
           {hasPhotos && (
             <section className="artifact-pane">
               <p className="micro-label">Artefak</p>

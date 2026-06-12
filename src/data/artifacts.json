@@ -427,18 +427,9 @@
     "voiceover": "/audio/voiceovers/wayang.m4a"
   },
   {
-    "sceneId": "mpu-12-naik-tangga",
-    "slug": "wayang-kulit-bangkalan",
-    "name": "Wayang Kulit Bangkalan",
-    "photos": [],
-    "cards": [],
-    "description": "",
-    "voiceover": ""
-  },
-  {
     "sceneId": "mpu-13",
-    "slug": "jaran-kepang",
-    "name": "Jaran Kepang",
+    "slug": "jaran-kencak",
+    "name": "Jaran Kencak",
     "photos": [
       "jaran-kecak_ruangan-13_13.jpg"
     ],

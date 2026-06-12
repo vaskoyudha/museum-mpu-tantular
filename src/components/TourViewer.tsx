@@ -15,6 +15,7 @@ type TourViewerProps = {
   artifacts?: Artifact[];
   visitedArtifacts?: Set<string>;
   onArtifactSelect?: (artifact: Artifact) => void;
+  isVoiceoverPlaying?: boolean;
 };
 
 type ResolvedHotspot = {
@@ -31,7 +32,7 @@ const MUSIC_SRC = '/audio/background-music.mp3';
 const DEG_STEP = 4 * (Math.PI / 180); // 4° dalam radian (PSV pakai radian)
 const PITCH_MAX = 85 * (Math.PI / 180);
 
-export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedArtifacts, onArtifactSelect }: TourViewerProps) {
+export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedArtifacts, onArtifactSelect, isVoiceoverPlaying = false }: TourViewerProps) {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<PhotoSphereViewer | null>(null);
   const hotspotRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -57,15 +58,15 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
   const { musicEnabled, setMusicEnabled } = useA11yPrefs();
   const music = useAudioPlayer({ src: MUSIC_SRC, loop: true, volume: 0.5 });
 
-  // Mainkan / jeda musik sesuai toggle
+  // Mainkan / jeda musik sesuai toggle, pause saat voiceover aktif
   useEffect(() => {
-    if (musicEnabled) {
+    if (musicEnabled && !isVoiceoverPlaying) {
       music.play();
     } else {
       music.pause();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [musicEnabled]);
+  }, [musicEnabled, isVoiceoverPlaying]);
 
   // Jeda saat tab tidak terlihat; lanjutkan saat kembali aktif
   useEffect(() => {

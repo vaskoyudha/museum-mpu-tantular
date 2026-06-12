@@ -43,8 +43,8 @@ const sceneAssets = [
   ['10-lurus', 'Area 10 · Ruang Koleksi Modern', '19-10-lurus.jpg', 'Ruang pamer berisi kapal Maru, mesin ketik, dan sepeda tinggi. Koleksi teknologi dan transportasi era kolonial dipajang dalam vitrin besar.'],
   ['11', 'Area 11 · Galeri Akhir Lantai 2', '20-11.jpg', 'Galeri bagian akhir lantai 2. Dari sini bisa lanjut naik tangga ke lantai paling atas atau menjelajah ruang lurus.'],
   ['11-lurus', 'Area 11 · Ruang Militer', '21-11-lurus.jpg', 'Ruang pamer militer berisi maket kapal pemburu torpedo Lynx. Ruangan ini memiliki pencahayaan dramatis yang menyoroti model kapal.'],
-  ['12-naik-tangga', 'Area 12 · Tangga ke Lantai Atas', '22-12-naik-tangga.jpg', 'Area tangga menuju lantai paling atas. Di sini terdapat koleksi wayang, termasuk wayang kulit Bangkalan. Tangga cukup lebar dengan pegangan di kedua sisi.'],
-  ['13', 'Area 13 · Ruang Kesenian (Akhir Tur)', '23-13.jpg', 'Ruang kesenian di lantai paling atas — titik terakhir tur. Berisi jaran kepang, reog, dan koleksi kesenian tradisional Jawa Timur lainnya. Ruangan luas dengan langit-langit tinggi.'],
+  ['12-naik-tangga', 'Area 12 · Tangga ke Lantai Atas', '22-12-naik-tangga.jpg', 'Area tangga menuju lantai paling atas. Tangga cukup lebar dengan pegangan di kedua sisi.'],
+  ['13', 'Area 13 · Ruang Kesenian (Akhir Tur)', '23-13.jpg', 'Ruang kesenian di lantai paling atas — titik terakhir tur. Berisi jaran kencak, reog, dan koleksi kesenian tradisional Jawa Timur lainnya. Ruangan luas dengan langit-langit tinggi.'],
 ] as const;
 
 type HotspotInput = Omit<TourHotspot, 'x' | 'y' | 'angle'> & Partial<Pick<TourHotspot, 'x' | 'y' | 'angle'>>;

@@ -354,8 +354,7 @@ dari kode). File voiceover yang cocok mengikuti konvensi
 | sepeda-tinggi                   | mpu-10-lurus                   | Sepeda Tinggi               |
 | maket-torpedo-lynx              | mpu-11-lurus                   | Maket Kapal Pemburu Torpedo Lynx |
 | wayang                          | mpu-12-naik-tangga             | Wayang                      |
-| wayang-kulit-bangkalan          | mpu-12-naik-tangga             | Wayang Kulit Bangkalan      |
-| jaran-kepang                    | mpu-13                         | Jaran Kepang                |
+| jaran-kencak                    | mpu-13                         | Jaran Kencak                |
 | reog                            | mpu-13                         | Reog                        |
 
 Jika Anda menambahkan artefak baru ke `artifacts.json`, tambahkan slug ke
