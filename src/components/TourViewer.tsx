@@ -247,9 +247,6 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
 
   // ── Keyboard rotation (game-loop: smooth WASD / arrow hold) ────
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
     const heldKeys = new Set<string>();
     let rafId = 0;
 
@@ -273,10 +270,17 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
       rafId = requestAnimationFrame(tick);
     };
 
+    const isInputFocused = () => {
+      const el = document.activeElement;
+      if (!el) return false;
+      const tag = el.tagName.toLowerCase();
+      return tag === 'input' || tag === 'textarea' || tag === 'select' || (el as HTMLElement).isContentEditable;
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
       const viewer = viewerRef.current;
       if (!viewer) return;
-      if (!stage.contains(document.activeElement) && document.activeElement !== stage) return;
+      if (isInputFocused()) return;
 
       switch (e.key) {
         case 'ArrowLeft':
@@ -314,12 +318,12 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
     };
 
     rafId = requestAnimationFrame(tick);
-    stage.addEventListener('keydown', onKeyDown);
-    stage.addEventListener('keyup', onKeyUp);
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
     return () => {
       cancelAnimationFrame(rafId);
-      stage.removeEventListener('keydown', onKeyDown);
-      stage.removeEventListener('keyup', onKeyUp);
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
     };
   }, []);
 
