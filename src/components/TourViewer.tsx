@@ -28,7 +28,7 @@ type ResolvedHotspot = {
 };
 
 const MUSIC_SRC = '/audio/background-music.mp3';
-const DEG_STEP = 10 * (Math.PI / 180); // 10° dalam radian (PSV pakai radian)
+const DEG_STEP = 4 * (Math.PI / 180); // 4° dalam radian (PSV pakai radian)
 const PITCH_MAX = 85 * (Math.PI / 180);
 
 export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedArtifacts, onArtifactSelect }: TourViewerProps) {
@@ -245,60 +245,82 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
     recomputeAnchors();
   }, [hotspots, viewerReady, recomputeAnchors]);
 
-  // ── Keyboard rotation (Tugas 11) ─────────────────────────────────
+  // ── Keyboard rotation (game-loop: smooth WASD / arrow hold) ────
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const heldKeys = new Set<string>();
+    let rafId = 0;
+
+    const tick = () => {
+      const viewer = viewerRef.current;
+      if (viewer && heldKeys.size > 0) {
+        const { yaw, pitch } = viewer.getPosition();
+        let dyaw = 0;
+        let dpitch = 0;
+
+        if (heldKeys.has('ArrowLeft') || heldKeys.has('a') || heldKeys.has('A')) dyaw -= DEG_STEP;
+        if (heldKeys.has('ArrowRight') || heldKeys.has('d') || heldKeys.has('D')) dyaw += DEG_STEP;
+        if (heldKeys.has('ArrowUp') || heldKeys.has('w') || heldKeys.has('W')) dpitch += DEG_STEP;
+        if (heldKeys.has('ArrowDown') || heldKeys.has('s') || heldKeys.has('S')) dpitch -= DEG_STEP;
+
+        if (dyaw !== 0 || dpitch !== 0) {
+          const newPitch = Math.max(-PITCH_MAX, Math.min(PITCH_MAX, pitch + dpitch));
+          viewer.rotate({ yaw: yaw + dyaw, pitch: newPitch });
+        }
+      }
+      rafId = requestAnimationFrame(tick);
+    };
 
     const onKeyDown = (e: KeyboardEvent) => {
       const viewer = viewerRef.current;
       if (!viewer) return;
-      // Hanya proses saat fokus di dalam stage
       if (!stage.contains(document.activeElement) && document.activeElement !== stage) return;
-
-      const { yaw, pitch } = viewer.getPosition();
-      const speed = prefersReduced ? 0 : 150; // ms animasi; 0 = langsung
 
       switch (e.key) {
         case 'ArrowLeft':
-          e.preventDefault();
-          void viewer.animate({ yaw: yaw - DEG_STEP, pitch, speed });
-          break;
         case 'ArrowRight':
-          e.preventDefault();
-          void viewer.animate({ yaw: yaw + DEG_STEP, pitch, speed });
-          break;
         case 'ArrowUp':
-          e.preventDefault();
-          void viewer.animate({ yaw, pitch: Math.min(PITCH_MAX, pitch + DEG_STEP), speed });
-          break;
         case 'ArrowDown':
+        case 'a': case 'A':
+        case 'd': case 'D':
+        case 'w': case 'W':
+        case 's': case 'S':
           e.preventDefault();
-          void viewer.animate({ yaw, pitch: Math.max(-PITCH_MAX, pitch - DEG_STEP), speed });
+          heldKeys.add(e.key);
           break;
         case '+':
         case '=':
           e.preventDefault();
-          viewer.zoom(viewer.getZoomLevel() + 10);
+          viewer.zoom(viewer.getZoomLevel() + 5);
           break;
         case '-':
         case '_':
           e.preventDefault();
-          viewer.zoom(viewer.getZoomLevel() - 10);
+          viewer.zoom(viewer.getZoomLevel() - 5);
           break;
         case 'Home':
           e.preventDefault();
-          void viewer.animate({ yaw: 0, pitch: 0, speed });
+          viewer.rotate({ yaw: 0, pitch: 0 });
           break;
         default:
           break;
       }
     };
 
+    const onKeyUp = (e: KeyboardEvent) => {
+      heldKeys.delete(e.key);
+    };
+
+    rafId = requestAnimationFrame(tick);
     stage.addEventListener('keydown', onKeyDown);
-    return () => stage.removeEventListener('keydown', onKeyDown);
+    stage.addEventListener('keyup', onKeyUp);
+    return () => {
+      cancelAnimationFrame(rafId);
+      stage.removeEventListener('keydown', onKeyDown);
+      stage.removeEventListener('keyup', onKeyUp);
+    };
   }, []);
 
   // Bersihkan Web Audio graph saat unmount
@@ -338,11 +360,11 @@ export function TourViewer({ museum, museums, onSelect, artifacts = [], visitedA
         ref={stageRef}
         className="panorama-stage"
         tabIndex={0}
-        aria-label={`Viewer panorama 360 untuk ${museum.name}. Gunakan tombol panah untuk memutar, +/- untuk zoom, Home untuk reset.`}
+        aria-label={`Viewer panorama 360 untuk ${museum.name}. Gunakan tombol panah atau WASD untuk memutar, +/- untuk zoom, Home untuk reset.`}
       >
         {/* Petunjuk tersembunyi untuk pembaca layar */}
         <p className="sr-only">
-          Gunakan tombol panah untuk memutar pandangan, tombol + atau - untuk memperbesar atau memperkecil, dan tombol Home untuk kembali ke posisi awal.
+          Gunakan tombol panah atau WASD untuk memutar pandangan, tombol + atau - untuk memperbesar atau memperkecil, dan tombol Home untuk kembali ke posisi awal.
         </p>
 
         

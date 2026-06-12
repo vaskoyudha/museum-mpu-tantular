@@ -25,6 +25,7 @@
     "eslint-plugin-react-hooks": "latest",
     "eslint-plugin-react-refresh": "latest",
     "globals": "latest",
+    "sharp": "^0.35.1",
     "typescript": "latest",
     "typescript-eslint": "latest",
     "vite": "latest"

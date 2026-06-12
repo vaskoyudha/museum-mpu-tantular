@@ -1,51 +1,85 @@
-# AGENTS.md
+# PROJECT KNOWLEDGE BASE
 
-Single-museum 360° tour SPA: Vite + React 19 + TypeScript, glassmorphism UI, panoramas rendered via `@photo-sphere-viewer/core` (Three.js under the hood). Content is **Museum Mpu Tantular** only (23 scenes); copy is **Bahasa Indonesia** — keep it that way unless told otherwise.
+**Generated:** 2025-01-XX
+**Commit:** 7046316
+**Branch:** main
 
-## Commands
+## OVERVIEW
+Single-museum 360° tour SPA: Vite + React 19 + TypeScript, glassmorphism UI, panoramas via `@photo-sphere-viewer/core` (Three.js). Content: **Museum Mpu Tantular** only (23 scenes). Copy: **Bahasa Indonesia** — keep it that way.
 
-- `npm run dev` — Vite dev server, binds `0.0.0.0:5173`
-- `npm run build` — runs `tsc -b && vite build`. The TS step is **part of the build**; type errors fail the build before bundling. Always run `npm run build` (not just `vite build`) when verifying changes.
-- `npm run lint` — ESLint flat config (`eslint.config.js`), targets `**/*.{ts,tsx}`, ignores `dist`.
-- `npm run preview` — Vite preview, binds `0.0.0.0:4173`.
+## STRUCTURE
+```
+museum-mpu-tantular/
+├── src/
+│   ├── App.tsx              # Monolithic: all sections + modal + nav (832 lines, intentional)
+│   ├── main.tsx             # React root mount
+│   ├── components/          # Only TourViewer is non-trivial (453 lines)
+│   ├── data/                # museums.ts (scene graph), artifacts.ts + .json
+│   ├── hooks/               # Accessibility: audio, TTS, a11y prefs, live announcer
+│   └── styles/global.css    # Single ~21KB stylesheet, design tokens in CSS vars
+├── public/
+│   ├── panoramas/           # 23 equirectangular (4096×2048)
+│   ├── images/              # Route thumbnails
+│   ├── artefek/             # Artifact photos/cards (Indonesian naming)
+│   └── audio/               # Background music, voiceovers
+└── docs/                    # Design refs, implementation plan, asset contract
+```
 
-No test runner, no formatter, no CI, no pre-commit hooks. Verification = `npm run lint && npm run build`.
+## WHERE TO LOOK
+| Task | Location | Notes |
+|------|----------|-------|
+| Add/edit scene | `src/data/museums.ts` + `public/panoramas/` + `public/images/` | Three files must sync |
+| Edit 360° viewer | `src/components/TourViewer.tsx` | Wraps photo-sphere-viewer, imperative hotspot positioning |
+| Add artifact | `src/data/artifacts.json` + `public/artefak/` | JSON is raw data, TS transforms it |
+| Accessibility features | `src/hooks/` + `src/components/AccessibilityWidget.tsx` | Screen reader, TTS, audio player |
+| UI strings/content | `src/data/museums.ts`, `src/App.tsx` | Indonesian only |
+| Design tokens | `src/styles/global.css` | CSS custom properties (warm ivory, smoked umber, amber) |
 
-## Strict TS gotchas
+## CODE MAP
+| Symbol | Type | Location | Role |
+|--------|------|----------|------|
+| `App` | Function | `src/App.tsx:56` | Root component, state-driven page switching (no router) |
+| `TourViewer` | Function | `src/components/TourViewer.tsx:34` | 360° panorama viewer with hotspot navigation |
+| `museums` | Array | `src/data/museums.ts:122` | All 23 scenes with hotspot graph |
+| `artifacts` | Array | `src/data/artifacts.ts` | Artifact catalog (from JSON) with scene index |
+| `useA11yPrefs` | Hook | `src/hooks/useA11yPrefs.ts` | Accessibility preferences (font size, contrast) |
+| `useTextToSpeech` | Hook | `src/hooks/useTextToSpeech.ts` | TTS for artifact descriptions |
+| `useAudioPlayer` | Hook | `src/hooks/useAudioPlayer.ts` | Background music + voiceover playback |
+| `useLiveAnnouncer` | Hook | `src/hooks/useLiveAnnouncer.ts` | Screen reader announcements |
 
-`tsconfig.app.json` has `strict`, `noUnusedLocals`, `noUnusedParameters`, `noEmit`. Unused imports / params are **build-breaking**, not warnings. Prefix unused params with `_` or remove them.
+## CONVENTIONS
+- **Strict TS is build-breaking**: `noUnusedLocals`, `noUnusedParameters` fail `tsc -b`. Prefix unused params with `_`.
+- **Deps pinned to `"latest"`**: `package-lock.json` is source of truth. Don't bump casually.
+- **Indonesian UI**: All strings, aria-labels, feature comments in Bahasa Indonesia.
+- **No router**: Single-page, state-driven navigation (`activePage` state variable).
+- **Monolithic App.tsx**: All sections in one file by design. Only `TourViewer` extracted.
+- **Single stylesheet**: `global.css` only. Match existing CSS custom properties; no CSS framework.
 
-`package.json` pins every dep to `"latest"` — `package-lock.json` is the source of truth. Don't bump versions casually; reproduce installs from the lockfile.
+## ANTI-PATTERNS (THIS PROJECT)
+- Don't add router, state library, or CSS framework — single-page, single-museum, single-stylesheet by design.
+- Don't suppress TS errors with `as any` / `@ts-ignore` — fix the unused symbol or type.
+- Don't move tour data out of `src/data/museums.ts` without updating `TourViewer.tsx` and `App.tsx`.
+- Don't commit PNGs to repo root — `*.png` gitignored (except `docs/design-references/*.png`).
+- Don't translate UI strings to English.
 
-## Architecture (small, flat)
+## COMMANDS
+```bash
+npm run dev      # Vite dev server (0.0.0.0:5173)
+npm run build    # tsc -b && vite build (type errors fail build)
+npm run lint     # ESLint flat config on **/*.{ts,tsx}
+npm run preview  # Vite preview (0.0.0.0:4173)
+```
+No test runner, no formatter, no CI. Verification = `npm run lint && npm run build`.
 
-- `src/main.tsx` → mounts `<App />`, imports `styles/global.css`.
-- `src/App.tsx` → all sections in one file (Header, Hero, FeaturedMuseum, TourSection, AudienceSection, GalleryKunjungiSection). No router.
-- `src/components/TourViewer.tsx` → only non-trivial component. Wraps `@photo-sphere-viewer/core` `Viewer`, projects hotspot anchors into screen space each frame using `viewer.dataHelper.sphericalCoordsToViewerCoords` and `isPointVisible`. Hotspots are positioned imperatively via CSS vars (`--hotspot-left/--hotspot-top`), not React state, for perf.
-- `src/data/museums.ts` → static content + scene graph. **All tour data lives here.**
-- `src/styles/global.css` → single ~21 KB stylesheet, design system in CSS custom properties (warm ivory, smoked umber, amber accents). Match the existing tokens; don't introduce a CSS framework.
+## COMMIT CONVENTION
+Use `Tested:` / `Not-tested:` trailers to document verification:
+```
+Tested: npm run build; npm run lint; Playwright smoke verified 23 scenes
+Not-tested: Manual visual review of every 360 scene
+```
 
-## Adding / editing tour scenes
-
-Three things must stay in sync or scenes will silently break:
-
-1. Drop equirectangular panorama (2:1 ratio, recommended `4096x2048` `.jpg`/`.webp`) in `public/panoramas/mpu-tantular/`.
-2. Drop matching thumbnail in `public/images/mpu-tantular/` (same filename).
-3. Edit `src/data/museums.ts`:
-   - Append `[id, label, filename, description]` to `sceneAssets`.
-   - Add an entry to `routeHotspots` keyed `mpu-<id>` with hotspots whose `targetId` matches another scene's `mpu-<id>`.
-
-Hotspots use the `hotspot()` helper with placement defaults (`forward`/`left`/`right`/`back`/`up`/`exit`); override `x`/`y` (percent of viewer) and `angle` (degrees, 0 = forward) when the default doesn't sit right on the rendered panorama. Background source format is HEIC; HEIC is **not** imported — convert to JPG/WebP first (see `docs/asset-contract.md`).
-
-## Repo conventions
-
-- **Language**: UI strings, `aria-label`s, comments in feature code are Indonesian. Don't translate to English.
-- **Image assets at repo root** (`meseum-*.png`, `tour-*.png`) are screenshots used during design iteration. They are gitignored by `*.png` (with `!docs/design-references/*.png` carve-out). Don't commit new PNGs to the root.
-- `.omx/` is orchestration tool state (`logs/`, `state/`, `metrics.json` are gitignored). Leave it alone.
-- `docs/implementation-plan.md`, `docs/design-analysis.md`, `docs/asset-contract.md` describe the original build plan and the panorama pipeline — read before large refactors.
-
-## Don'ts
-
-- Don't add a router, state library, or CSS framework — single-page, single-museum, single stylesheet by design.
-- Don't suppress strict-TS errors with `as any` / `@ts-ignore`; fix the unused symbol or type.
-- Don't move tour data out of `src/data/museums.ts` without updating `TourViewer.tsx` and `App.tsx` — they import it directly.
+## NOTES
+- **Hotspot positioning**: Imperative CSS vars (`--hotspot-left/--hotspot-top`), not React state, for perf.
+- **HEIC not supported**: Convert to JPG/WebP first (see `docs/asset-contract.md`).
+- **Scene sync**: Panorama + thumbnail + `museums.ts` entry must all exist or scene breaks silently.
+- **Accessibility hooks**: See `src/hooks/AGENTS.md` for domain-specific patterns.
