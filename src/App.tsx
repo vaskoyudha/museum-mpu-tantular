@@ -59,6 +59,8 @@ function App() {
   const [activeMuseum, setActiveMuseum] = useState<Museum>(museums[0]);
   const [activeArtifact, setActiveArtifact] = useState<Artifact | null>(null);
   const [isVoiceoverPlaying, setIsVoiceoverPlaying] = useState(false);
+  const [isTTSPlaying, setIsTTSPlaying] = useState(false);
+  const isAnyAudioPlaying = isVoiceoverPlaying || isTTSPlaying;
   const [visitedArtifacts, setVisitedArtifacts] = useState<Set<string>>(() => {
     if (typeof window === 'undefined') return new Set();
     try {
@@ -136,7 +138,7 @@ function App() {
       <SkipLink />
       <LiveAnnouncer />
       <WelcomeModal onEnter={handleWelcomeEnter} />
-      <Header activePage={activePage} onNavigate={handleNavigate} />
+      <Header activePage={activePage} onNavigate={handleNavigate} isVoiceoverPlaying={isAnyAudioPlaying} />
 
       {/* ── Beranda (Home) — semua section berurutan ── */}
       {activePage === 'home' && (
@@ -150,6 +152,8 @@ function App() {
             visitedArtifacts={visitedArtifacts}
             onArtifactSelect={handleArtifactSelect}
             isVoiceoverPlaying={isVoiceoverPlaying}
+            onTTSPlay={() => setIsTTSPlaying(true)}
+            onTTSPause={() => setIsTTSPlaying(false)}
           />
           <CatalogSection
             museums={museums}
@@ -180,6 +184,8 @@ function App() {
             visitedArtifacts={visitedArtifacts}
             onArtifactSelect={handleArtifactSelect}
             isVoiceoverPlaying={isVoiceoverPlaying}
+            onTTSPlay={() => setIsTTSPlaying(true)}
+            onTTSPause={() => setIsTTSPlaying(false)}
           />
         </div>
       )}
@@ -252,7 +258,7 @@ function MobileTabBar({ activePage, onNavigate }: { activePage: AppPage; onNavig
   );
 }
 
-function Header({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (page: AppPage) => void }) {
+function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: AppPage; onNavigate: (page: AppPage) => void; isVoiceoverPlaying?: boolean }) {
   return (
     <header className="glass-nav" aria-label="Navigasi utama">
       <button
@@ -278,7 +284,7 @@ function Header({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (
         ))}
       </nav>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <BackgroundMusic />
+        <BackgroundMusic isVoiceoverPlaying={isVoiceoverPlaying} />
         <button className="icon-button" type="button" aria-label="Buka menu">
           <Menu size={22} />
         </button>
@@ -411,7 +417,7 @@ function FeaturedMuseum({ museums: featured, activeId, onSelect }: { museums: Mu
   );
 }
 
-function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts, onArtifactSelect, isVoiceoverPlaying }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void; visitedArtifacts: Set<string>; onArtifactSelect: (artifact: Artifact) => void; isVoiceoverPlaying: boolean }) {
+function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts, onArtifactSelect, isVoiceoverPlaying, onTTSPlay, onTTSPause }: { activeMuseum: Museum; museums: Museum[]; onSelect: (museum: Museum) => void; visitedArtifacts: Set<string>; onArtifactSelect: (artifact: Artifact) => void; isVoiceoverPlaying: boolean; onTTSPlay?: () => void; onTTSPause?: () => void }) {
   const activeIndex = scenes.findIndex((s) => s.id === activeMuseum.id);
   const total = scenes.length;
   const prevScene = activeIndex > 0 ? scenes[activeIndex - 1] : null;
@@ -435,6 +441,14 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
     return acc;
   }, {});
   const stripPrefix = (label: string) => label.replace(/^Area\s+\d+(?:[a-z-]*)?\s*·\s*/i, '');
+
+  const handleSelectWithFullscreen = useCallback((scene: Museum) => {
+    onSelect(scene);
+    const stage = document.querySelector('.panorama-stage') as HTMLElement | null;
+    if (stage && !document.fullscreenElement) {
+      stage.requestFullscreen().catch(() => {});
+    }
+  }, [onSelect]);
 
   return (
     <section id="tour-tour" className="tour-section section-pad">
@@ -463,7 +477,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
                         type="button"
                         key={scene.id}
                         className={`scene-pill ${categorySlug[cat]} ${isActive ? 'active' : ''}`}
-                        onClick={() => onSelect(scene)}
+                        onClick={() => handleSelectWithFullscreen(scene)}
                       >
                         <span className="pill-num">{String(idx + 1).padStart(2, '0')}</span>
                         <span className="pill-label">{stripPrefix(scene.highlight)}</span>
@@ -487,7 +501,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
       <TourViewer
         museum={activeMuseum}
         museums={scenes}
-        onSelect={onSelect}
+        onSelect={handleSelectWithFullscreen}
         artifacts={sceneArtifacts}
         visitedArtifacts={visitedArtifacts}
         onArtifactSelect={onArtifactSelect}
@@ -527,7 +541,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
             <h3>{activeMuseum.highlight}</h3>
             <p className="scene-meta"><MapPin size={14} /> {activeMuseum.city}, {activeMuseum.province}</p>
             <div className="scene-tts-wrapper">
-              <TextToSpeechButton text={`${activeMuseum.highlight}. ${activeMuseum.description}`} />
+              <TextToSpeechButton text={`${activeMuseum.highlight}. ${activeMuseum.description}`} onPlay={onTTSPlay} onPause={onTTSPause} />
             </div>
           </div>
         </div>
@@ -541,7 +555,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
                 if (!target) return null;
                 return (
                   <li key={`${h.targetId}-${h.label}`}>
-                    <button type="button" className="route-link" onClick={() => onSelect(target)}>
+                    <button type="button" className="route-link" onClick={() => handleSelectWithFullscreen(target)}>
                       <span className="route-thumb" style={{ backgroundImage: `url(${target.image})` }} aria-hidden="true" />
                       <span className="route-text">
                         <span className="route-label">{h.label}</span>
@@ -561,7 +575,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
             type="button"
             className="nav-step"
             disabled={!prevScene}
-            onClick={() => prevScene && onSelect(prevScene)}
+            onClick={() => prevScene && handleSelectWithFullscreen(prevScene)}
           >
             <ArrowRight size={16} className="flip" />
             <span>
@@ -573,7 +587,7 @@ function TourSection({ activeMuseum, museums: scenes, onSelect, visitedArtifacts
             type="button"
             className="nav-step nav-next"
             disabled={!nextScene}
-            onClick={() => nextScene && onSelect(nextScene)}
+            onClick={() => nextScene && handleSelectWithFullscreen(nextScene)}
           >
             <span>
               <small>Berikutnya</small>

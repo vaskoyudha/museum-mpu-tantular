@@ -1,14 +1,27 @@
 import { Volume2, VolumeX } from 'lucide-react';
 import { useTextToSpeech } from '../hooks/useTextToSpeech';
+import { useEffect } from 'react';
 
 type TextToSpeechButtonProps = {
   text: string;
   label?: string;
   className?: string;
+  /** Dipanggil saat TTS mulai diputar (untuk ducking musik). */
+  onPlay?: () => void;
+  /** Dipanggil saat TTS dijeda atau selesai (untuk membatalkan ducking). */
+  onPause?: () => void;
 };
 
-export default function TextToSpeechButton({ text, label = 'Bacakan Deskripsi', className = '' }: TextToSpeechButtonProps) {
+export default function TextToSpeechButton({ text, label = 'Bacakan Deskripsi', className = '', onPlay, onPause }: TextToSpeechButtonProps) {
   const { isPlaying, isSupported, toggle } = useTextToSpeech();
+
+  useEffect(() => {
+    if (isPlaying) {
+      onPlay?.();
+    } else {
+      onPause?.();
+    }
+  }, [isPlaying, onPlay, onPause]);
 
   if (!isSupported) {
     return null;

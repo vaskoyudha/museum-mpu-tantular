@@ -4,10 +4,15 @@ import { useA11yPrefs } from '../hooks/useA11yPrefs';
 
 const MUSIC_SRC = '/audio/background-music.mp3';
 
-export default function BackgroundMusic() {
+interface BackgroundMusicProps {
+  isVoiceoverPlaying?: boolean;
+}
+
+export default function BackgroundMusic({ isVoiceoverPlaying = false }: BackgroundMusicProps) {
   const { musicEnabled, setMusicEnabled } = useA11yPrefs();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const wasPlayingBeforeDuck = useRef(false);
 
   // Browsers block audio autoplay without a user gesture.
   // Listen for the first interaction (click / key / touch) and set a flag
@@ -33,22 +38,27 @@ export default function BackgroundMusic() {
     };
   }, [hasInteracted]);
 
-  // Play / pause based on musicEnabled — only after first user interaction.
-  // Before interaction, the <audio preload="auto"> element starts buffering
-  // the file in the background so playback is instant once the user engages.
   useEffect(() => {
     if (!hasInteracted || !audioRef.current) return;
 
     audioRef.current.volume = 0.5;
 
+    if (isVoiceoverPlaying) {
+      wasPlayingBeforeDuck.current = musicEnabled && !audioRef.current.paused;
+      audioRef.current.pause();
+      return;
+    }
+
     if (musicEnabled) {
       void audioRef.current.play().catch((err) => {
         console.warn('Background music play failed:', err);
       });
+    } else if (wasPlayingBeforeDuck.current) {
+      wasPlayingBeforeDuck.current = false;
     } else {
       audioRef.current.pause();
     }
-  }, [musicEnabled, hasInteracted]);
+  }, [musicEnabled, hasInteracted, isVoiceoverPlaying]);
 
   const togglePlay = useCallback(() => {
     setMusicEnabled(!musicEnabled);
