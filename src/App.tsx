@@ -7,6 +7,7 @@ import {
   Clock3,
   Compass,
   GraduationCap,
+  HelpCircle,
   Home,
   Landmark,
   MapPin,
@@ -32,8 +33,10 @@ import TextToSpeechButton from './components/TextToSpeechButton';
 import { useA11yPrefs } from './hooks/useA11yPrefs';
 import BackgroundMusic from './components/BackgroundMusic';
 import WelcomeModal from './components/WelcomeModal';
+import GuideSection from './components/GuideSection';
+import VideoProfileSection from './components/VideoProfileSection';
 
-type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog';
+type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog' | 'panduan';
 
 const navPageItems: { label: string; page: AppPage }[] = [
   { label: 'Museum', page: 'museum' },
@@ -41,14 +44,15 @@ const navPageItems: { label: string; page: AppPage }[] = [
   { label: 'Cerita', page: 'stories' },
   { label: 'Kunjungi', page: 'visit' },
   { label: 'Katalog', page: 'katalog' },
+  { label: 'Panduan', page: 'panduan' },
 ];
 
 const mobilePageTabs: { id: AppPage; label: string; icon: typeof Home }[] = [
   { id: 'home', label: 'Beranda', icon: Home },
-  { id: 'museum', label: 'Museum', icon: Landmark },
   { id: 'tour', label: 'Tur 360', icon: Compass },
   { id: 'katalog', label: 'Katalog', icon: BookOpen },
   { id: 'visit', label: 'Kunjungi', icon: MapPin },
+  { id: 'panduan', label: 'Panduan', icon: HelpCircle },
 ];
 
 const VISITED_STORAGE_KEY = 'mpu-tantular-artefak-visited';
@@ -114,6 +118,7 @@ function App() {
       stories: 'Cerita',
       visit: 'Kunjungi',
       katalog: 'Katalog Aksesibilitas',
+      panduan: 'Panduan Penggunaan',
     };
     announce('Membuka ' + pageLabels[page]);
   }, [announce]);
@@ -161,6 +166,8 @@ function App() {
             onArtifactSelect={handleArtifactSelect}
           />
           <AudienceSection />
+          <VideoProfileSection />
+          <GuideSection />
           <GalleryKunjungiSection />
         </div>
       )}
@@ -215,6 +222,15 @@ function App() {
             artifactsByScene={artifactsByScene}
             onArtifactSelect={handleArtifactSelect}
           />
+        </div>
+      )}
+
+      {/* ── Halaman Panduan ── */}
+      {activePage === 'panduan' && (
+        <div className="page-view page-view--full" key="panduan">
+          <PageHeader title="Panduan Penggunaan" subtitle="Cara menjelajah Museum360 Nusantara" onBack={() => handleNavigate('home')} />
+          <VideoProfileSection />
+          <GuideSection />
         </div>
       )}
 

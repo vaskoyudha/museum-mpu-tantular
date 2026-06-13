@@ -1781,6 +1781,478 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
 }
 
 /* ============================================================
+   Panduan Penggunaan (Usage Guide)
+   ============================================================ */
+.guide-section {
+  padding-top: 5rem;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+  margin-bottom: 3.5rem;
+}
+
+@media (min-width: 640px) {
+  .guide-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .guide-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.guide-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 2.2rem 1.4rem 1.4rem;
+  background: var(--paper);
+  border: var(--border-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-thick);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  overflow: visible;
+}
+
+.guide-step:hover {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-mid);
+}
+
+.guide-step--terracotta { background: var(--rose); }
+.guide-step--saffron { background: var(--saffron); }
+.guide-step--jade { background: var(--jade); }
+.guide-step--jade .guide-step-content h3,
+.guide-step--jade .guide-step-content p { color: var(--cream); }
+.guide-step--jade .guide-step-content p { opacity: 0.88; }
+.guide-step--indigo { background: var(--indigo); }
+.guide-step--indigo .guide-step-content h3,
+.guide-step--indigo .guide-step-content p { color: var(--cream); }
+.guide-step--indigo .guide-step-content p { opacity: 0.88; }
+
+.guide-step-number {
+  position: absolute;
+  top: -14px;
+  right: -8px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: "Fraunces", serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  box-shadow: var(--shadow-thin);
+  transform: rotate(6deg);
+}
+
+.guide-step-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: var(--border-ink);
+  box-shadow: var(--shadow-thin);
+}
+
+.guide-step-icon--terracotta { background: var(--terracotta); color: var(--cream); }
+.guide-step-icon--saffron { background: var(--saffron); color: var(--ink); }
+.guide-step-icon--jade { background: var(--saffron); color: var(--ink); }
+.guide-step-icon--indigo { background: var(--saffron); color: var(--ink); }
+
+.guide-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.guide-step-content h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.guide-step-content p {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Quick Tips */
+.guide-tips {
+  background: var(--ink);
+  color: var(--cream);
+  border: var(--border-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-thick);
+  padding: 2rem 1.6rem;
+  position: relative;
+}
+
+.guide-tips::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 18' preserveAspectRatio='none'><path d='M0 0 Q10 18 20 0 T40 0 V18 H0 Z' fill='%232A1B12'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 40px 18px;
+  transform: translateY(-100%);
+}
+
+.guide-tips-header {
+  margin-bottom: 1.5rem;
+}
+
+.guide-tips-header h3 {
+  font-family: "Fraunces", serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--cream);
+  margin: 0 0 0.3rem;
+}
+
+.guide-tips-header p {
+  font-size: 0.88rem;
+  color: var(--saffron);
+  margin: 0;
+  font-weight: 600;
+}
+
+.guide-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.guide-tip-card {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: rgba(255, 247, 229, 0.08);
+  border: 1.5px solid rgba(255, 247, 229, 0.15);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+}
+
+.guide-tip-card:hover {
+  background: rgba(255, 247, 229, 0.14);
+}
+
+.guide-tip-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--saffron);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+}
+
+.guide-tip-card h4 {
+  font-family: "Fraunces", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0 0 0.2rem;
+}
+
+.guide-tip-card p {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 247, 229, 0.78);
+  margin: 0;
+}
+
+/* ============================================================
+   Video Profil (Video Profile)
+   ============================================================ */
+.video-profile-section {
+  padding-top: 5rem;
+}
+
+.video-profile-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1080px) {
+  .video-profile-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 3rem;
+  }
+}
+
+.video-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.video-profile-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.video-profile-highlight {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 1rem;
+  background: var(--paper-2);
+  border: var(--border-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-thin);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.video-profile-highlight:hover {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.video-profile-highlight-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--terracotta);
+  color: var(--cream);
+  border: 1.5px solid var(--ink);
+  box-shadow: var(--shadow-thin);
+}
+
+.video-profile-highlight strong {
+  display: block;
+  font-family: "Fraunces", serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.video-profile-highlight span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.video-profile-external {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  border-bottom: 2px solid var(--terracotta);
+  padding-bottom: 2px;
+  width: fit-content;
+}
+
+.video-profile-external:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Video Frame — polaroid / editorial frame */
+.video-profile-frame {
+  position: relative;
+  background: var(--paper);
+  border: var(--border-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-thick);
+  padding: 14px 14px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.video-profile-frame-label {
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--terracotta);
+  color: var(--cream);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--ink);
+  box-shadow: var(--shadow-thin);
+  transform: rotate(-1.5deg);
+  z-index: 2;
+}
+
+.video-profile-player-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.video-profile-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-profile-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-profile-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  gap: 0.8rem;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(251, 243, 226, 0.06) 1px, transparent 0),
+    linear-gradient(135deg, var(--ink), #1a120c);
+  background-size: 22px 22px, auto;
+}
+
+.video-profile-placeholder-icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--terracotta);
+  color: var(--cream);
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 6px rgba(209, 75, 44, 0.25);
+}
+
+.video-profile-placeholder-title {
+  font-family: "Fraunces", serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cream);
+  margin: 0;
+}
+
+.video-profile-placeholder-hint {
+  font-size: 0.82rem;
+  color: rgba(255, 247, 229, 0.65);
+  line-height: 1.55;
+  max-width: 36ch;
+  margin: 0;
+}
+
+.video-profile-placeholder-hint code {
+  display: inline;
+  background: rgba(255, 247, 229, 0.12);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: var(--saffron);
+}
+
+.video-profile-frame-caption {
+  display: block;
+  font-family: "Caveat", "Fraunces", serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--ink);
+  text-align: center;
+  padding: 0.55rem 0.25rem 0.85rem;
+  line-height: 1.15;
+}
+
+/* Responsive adjustments for Guide and Video sections */
+@media (max-width: 639px) {
+  .guide-steps {
+    gap: 1rem;
+  }
+  .guide-step {
+    padding: 1.8rem 1.1rem 1.1rem;
+    box-shadow: var(--shadow-mid);
+  }
+  .guide-step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 0.95rem;
+    top: -12px;
+    right: -6px;
+  }
+  .guide-step-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .guide-step-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .guide-step-content h3 {
+    font-size: 1rem;
+  }
+  .guide-step-content p {
+    font-size: 0.84rem;
+  }
+  .guide-tips {
+    padding: 1.4rem 1rem;
+    box-shadow: var(--shadow-mid);
+  }
+  .guide-tips-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-tip-card {
+    padding: 0.85rem;
+  }
+  .video-profile-frame {
+    padding: 10px 10px 0;
+    box-shadow: var(--shadow-mid);
+  }
+  .video-profile-frame-label {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.55rem;
+  }
+  .video-profile-placeholder {
+    padding: 1.5rem 1rem;
+  }
+  .video-profile-placeholder-icon {
+    width: 56px;
+    height: 56px;
+  }
+  .video-profile-placeholder-title {
+    font-size: 1.1rem;
+  }
+  .video-profile-placeholder-hint {
+    font-size: 0.78rem;
+  }
+}
+
+/* ============================================================
    Gallery / Visit
    ============================================================ */
 .gallery-visit {
