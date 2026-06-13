@@ -35,6 +35,7 @@ import BackgroundMusic from './components/BackgroundMusic';
 import WelcomeModal from './components/WelcomeModal';
 import GuideSection from './components/GuideSection';
 import VideoProfileSection from './components/VideoProfileSection';
+import ViewerGuideSection from './components/ViewerGuideSection';
 
 type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog' | 'panduan';
 
@@ -231,6 +232,7 @@ function App() {
           <PageHeader title="Panduan Penggunaan" subtitle="Cara menjelajah Museum360 Nusantara" onBack={() => handleNavigate('home')} />
           <VideoProfileSection />
           <GuideSection />
+          <ViewerGuideSection />
         </div>
       )}
 
