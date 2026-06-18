@@ -3575,10 +3575,10 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
     left: .6rem;
     right: .6rem;
     bottom: calc(max(.5rem, env(safe-area-inset-bottom)) + 72px);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: .4rem;
-    padding: .75rem .5rem;
+    padding: .5rem;
     background: var(--paper);
     border: var(--border-ink);
     border-radius: var(--radius-xl);
@@ -3587,20 +3587,18 @@ p { margin-top: 0; color: var(--ink-soft); line-height: 1.62; font-size: 1rem; }
   }
   .mobile-expand-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: .35rem;
-    padding: .75rem .25rem;
+    gap: .75rem;
+    padding: .85rem 1rem;
     border-radius: var(--radius-lg);
     color: var(--ink-soft);
     font-weight: 700;
-    font-size: .7rem;
+    font-size: .8rem;
     letter-spacing: .03em;
     text-transform: uppercase;
     transition: background .18s ease, color .18s ease, transform .18s ease;
   }
-  .mobile-expand-item:active { transform: scale(.96); }
+  .mobile-expand-item:active { transform: scale(.98); }
   .mobile-expand-item.is-active {
     color: var(--ink);
     background: var(--paper-2);
