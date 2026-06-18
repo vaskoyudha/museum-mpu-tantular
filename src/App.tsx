@@ -6,6 +6,7 @@ import {
   Check,
   Clock3,
   Compass,
+  Film,
   GraduationCap,
   HelpCircle,
   Home,
@@ -54,6 +55,12 @@ const mobilePageTabs: { id: AppPage; label: string; icon: typeof Home }[] = [
   { id: 'tour', label: 'Tur 360', icon: Compass },
   { id: 'katalog', label: 'Katalog', icon: BookOpen },
   { id: 'visit', label: 'Kunjungi', icon: MapPin },
+];
+
+const mobileExpandedTabs: { id: AppPage; label: string; icon: typeof Home }[] = [
+  { id: 'museum', label: 'Museum', icon: Building2 },
+  { id: 'stories', label: 'Cerita', icon: Sparkles },
+  { id: 'video-profil', label: 'Video Profil', icon: Film },
   { id: 'panduan', label: 'Panduan', icon: HelpCircle },
 ];
 
@@ -262,27 +269,71 @@ function App() {
 }
 
 function MobileTabBar({ activePage, onNavigate }: { activePage: AppPage; onNavigate: (page: AppPage) => void }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleNavigate = (page: AppPage) => {
+    onNavigate(page);
+    setExpanded(false);
+  };
+
   return (
-    <nav className="mobile-tabbar" aria-label="Navigasi seluler">
-      {mobilePageTabs.map((tab) => {
-        const Icon = tab.icon;
-        const isActive = tab.id === activePage;
-        return (
-          <button
-            key={tab.id}
-            type="button"
-            className={`mobile-tab ${isActive ? 'is-active' : ''}`}
-            aria-current={isActive ? 'page' : undefined}
-            onClick={() => onNavigate(tab.id)}
-          >
-            <span className="mobile-tab-icon" aria-hidden="true">
-              <Icon size={22} strokeWidth={2.2} />
-            </span>
-            <span className="mobile-tab-label">{tab.label}</span>
-          </button>
-        );
-      })}
-    </nav>
+    <>
+      {expanded && (
+        <div className="mobile-expand-overlay" onClick={() => setExpanded(false)} aria-hidden="true" />
+      )}
+      <nav className="mobile-tabbar" aria-label="Navigasi seluler">
+        {mobilePageTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = tab.id === activePage;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              className={`mobile-tab ${isActive ? 'is-active' : ''}`}
+              aria-current={isActive ? 'page' : undefined}
+              onClick={() => handleNavigate(tab.id)}
+            >
+              <span className="mobile-tab-icon" aria-hidden="true">
+                <Icon size={22} strokeWidth={2.2} />
+              </span>
+              <span className="mobile-tab-label">{tab.label}</span>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          className={`mobile-tab mobile-tab-expand ${expanded ? 'is-active' : ''}`}
+          aria-expanded={expanded}
+          aria-label="Tampilkan menu lainnya"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <span className="mobile-tab-icon" aria-hidden="true">
+            {expanded ? <X size={22} strokeWidth={2.2} /> : <Menu size={22} strokeWidth={2.2} />}
+          </span>
+          <span className="mobile-tab-label">Lainnya</span>
+        </button>
+      </nav>
+      {expanded && (
+        <div className="mobile-expand-drawer" role="dialog" aria-label="Menu navigasi lainnya">
+          {mobileExpandedTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.id === activePage;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                className={`mobile-expand-item ${isActive ? 'is-active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => handleNavigate(tab.id)}
+              >
+                <Icon size={20} strokeWidth={2} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }
 
