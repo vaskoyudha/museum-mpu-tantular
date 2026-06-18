@@ -37,13 +37,13 @@ import GuideSection from './components/GuideSection';
 import VideoProfileSection from './components/VideoProfileSection';
 import ViewerGuideSection from './components/ViewerGuideSection';
 
-type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog' | 'panduan';
+type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog' | 'panduan' | 'video-profil';
 
-const navPageItems: { label: string; page: AppPage; anchor?: string }[] = [
+const navPageItems: { label: string; page: AppPage }[] = [
   { label: 'Museum', page: 'museum' },
   { label: 'Tur 360', page: 'tour' },
   { label: 'Cerita', page: 'stories' },
-  { label: 'Video Profil', page: 'home', anchor: '#video-profil' },
+  { label: 'Video Profil', page: 'video-profil' },
   { label: 'Kunjungi', page: 'visit' },
   { label: 'Katalog', page: 'katalog' },
   { label: 'Panduan', page: 'panduan' },
@@ -121,6 +121,7 @@ function App() {
       visit: 'Kunjungi',
       katalog: 'Katalog Aksesibilitas',
       panduan: 'Panduan Penggunaan',
+      'video-profil': 'Video Profil',
     };
     announce('Membuka ' + pageLabels[page]);
   }, [announce]);
@@ -237,6 +238,14 @@ function App() {
         </div>
       )}
 
+      {/* ── Halaman Video Profil ── */}
+      {activePage === 'video-profil' && (
+        <div className="page-view page-view--full" key="video-profil">
+          <PageHeader title="Video Profil" subtitle="Profil Museum Mpu Tantular" onBack={() => handleNavigate('home')} />
+          <VideoProfileSection />
+        </div>
+      )}
+
       <AccessibilityWidget />
       <MobileTabBar activePage={activePage} onNavigate={handleNavigate} />
       {activeArtifact ? (
@@ -278,16 +287,6 @@ function MobileTabBar({ activePage, onNavigate }: { activePage: AppPage; onNavig
 }
 
 function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: AppPage; onNavigate: (page: AppPage) => void; isVoiceoverPlaying?: boolean }) {
-  const handleNavClick = (item: { label: string; page: AppPage; anchor?: string }) => {
-    onNavigate(item.page);
-    if (item.anchor) {
-      setTimeout(() => {
-        const el = document.querySelector(item.anchor!);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  };
-
   return (
     <header className="glass-nav" aria-label="Navigasi utama">
       <button
@@ -306,7 +305,7 @@ function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: Ap
             type="button"
             className={`nav-page-btn ${activePage === item.page ? 'is-active' : ''}`}
             aria-current={activePage === item.page ? 'page' : undefined}
-            onClick={() => handleNavClick(item)}
+            onClick={() => onNavigate(item.page)}
           >
             {item.label}
           </button>
