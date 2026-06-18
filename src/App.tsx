@@ -39,10 +39,11 @@ import ViewerGuideSection from './components/ViewerGuideSection';
 
 type AppPage = 'home' | 'museum' | 'tour' | 'stories' | 'visit' | 'katalog' | 'panduan';
 
-const navPageItems: { label: string; page: AppPage }[] = [
+const navPageItems: { label: string; page: AppPage; anchor?: string }[] = [
   { label: 'Museum', page: 'museum' },
   { label: 'Tur 360', page: 'tour' },
   { label: 'Cerita', page: 'stories' },
+  { label: 'Video Profil', page: 'home', anchor: '#video-profil' },
   { label: 'Kunjungi', page: 'visit' },
   { label: 'Katalog', page: 'katalog' },
   { label: 'Panduan', page: 'panduan' },
@@ -277,6 +278,16 @@ function MobileTabBar({ activePage, onNavigate }: { activePage: AppPage; onNavig
 }
 
 function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: AppPage; onNavigate: (page: AppPage) => void; isVoiceoverPlaying?: boolean }) {
+  const handleNavClick = (item: { label: string; page: AppPage; anchor?: string }) => {
+    onNavigate(item.page);
+    if (item.anchor) {
+      setTimeout(() => {
+        const el = document.querySelector(item.anchor!);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
+
   return (
     <header className="glass-nav" aria-label="Navigasi utama">
       <button
@@ -295,7 +306,7 @@ function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: Ap
             type="button"
             className={`nav-page-btn ${activePage === item.page ? 'is-active' : ''}`}
             aria-current={activePage === item.page ? 'page' : undefined}
-            onClick={() => onNavigate(item.page)}
+            onClick={() => handleNavClick(item)}
           >
             {item.label}
           </button>

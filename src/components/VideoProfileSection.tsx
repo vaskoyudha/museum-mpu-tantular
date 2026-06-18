@@ -1,10 +1,7 @@
 import { Film, ExternalLink, MapPin, Calendar, Users } from 'lucide-react';
 
-// Ganti URL ini dengan URL video profil Museum Mpu Tantular yang sebenarnya.
-// Bisa berupa URL YouTube (contoh: https://www.youtube.com/embed/VIDEO_ID)
-// atau path ke file video lokal (contoh: /videos/profil-museum.mp4)
-const VIDEO_SOURCE = '';
-const VIDEO_TYPE: 'youtube' | 'local' = 'youtube';
+const VIDEO_SOURCE = 'https://drive.google.com/file/d/1ikE26CQzipjkr2_eCNNUMO0Y5DgTxPq9/preview';
+const VIDEO_TYPE: 'youtube' | 'local' | 'gdrive' = 'gdrive';
 
 const videoHighlights = [
   { icon: MapPin, label: 'Sidoarjo', description: 'Lokasi museum di Jawa Timur' },
@@ -30,7 +27,7 @@ export default function VideoProfileSection() {
       );
     }
 
-    if (VIDEO_TYPE === 'youtube') {
+    if (VIDEO_TYPE === 'youtube' || VIDEO_TYPE === 'gdrive') {
       return (
         <iframe
           className="video-profile-iframe"
@@ -94,7 +91,13 @@ export default function VideoProfileSection() {
           {VIDEO_SOURCE && (
             <a
               className="video-profile-external"
-              href={VIDEO_TYPE === 'youtube' ? VIDEO_SOURCE : '#'}
+              href={
+                VIDEO_TYPE === 'youtube'
+                  ? VIDEO_SOURCE
+                  : VIDEO_TYPE === 'gdrive'
+                    ? 'https://drive.google.com/file/d/1ikE26CQzipjkr2_eCNNUMO0Y5DgTxPq9/view'
+                    : '#'
+              }
               target="_blank"
               rel="noreferrer"
             >
