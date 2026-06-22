@@ -79,7 +79,7 @@ export default function GuideSection() {
           <span /> Panduan Penggunaan
         </p>
         <h2>
-          Cara Menjelajah <span className="brush">Museum360</span>
+          Cara Menjelajah <span className="brush">Museum Mpu Tantular</span>
         </h2>
         <p>
           Ikuti langkah-langkah berikut untuk mendapatkan pengalaman terbaik

@@ -238,7 +238,7 @@ function App() {
       {/* ── Halaman Panduan ── */}
       {activePage === 'panduan' && (
         <div className="page-view page-view--full" key="panduan">
-          <PageHeader title="Panduan Penggunaan" subtitle="Cara menjelajah Museum360 Nusantara" onBack={() => handleNavigate('home')} />
+          <PageHeader title="Panduan Penggunaan" subtitle="Cara menjelajah Museum Mpu Tantular" onBack={() => handleNavigate('home')} />
           <VideoProfileSection />
           <GuideSection />
           <ViewerGuideSection />
@@ -343,11 +343,11 @@ function Header({ activePage, onNavigate, isVoiceoverPlaying }: { activePage: Ap
       <button
         className="brand-mark"
         type="button"
-        aria-label="Kembali ke beranda Museum360 Nusantara"
+        aria-label="Kembali ke beranda Museum Mpu Tantular"
         onClick={() => onNavigate('home')}
       >
         <span className="brand-symbol">✦</span>
-        <span><strong>Museum360</strong> Nusantara</span>
+        <span><strong>Museum Mpu</strong> Tantular</span>
       </button>
       <nav className="nav-links" aria-label="Bagian situs">
         {navPageItems.map((item) => (
@@ -764,7 +764,7 @@ function GalleryKunjungiSection() {
         <a className="button button-ghost" href="#museums"><BookOpen size={19} /> Lihat Panduan Museum</a>
       </div>
       <footer className="footer-line">
-        <strong>Museum360 Nusantara</strong>
+        <strong>Museum Mpu Tantular</strong>
         <span>Rute 360 Museum Mpu Tantular didukung oleh aset panorama milikmu.</span>
       </footer>
     </section>

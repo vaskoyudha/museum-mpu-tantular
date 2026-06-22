@@ -1,4 +1,4 @@
-# Museum360 Nusantara — Museum Mpu Tantular
+# Museum Mpu Tantular
 
 Website modern Vite + React + TypeScript untuk tur virtual 360° **Museum Mpu Tantular** di Sidoarjo, Jawa Timur dengan tema glassmorphism.
 
